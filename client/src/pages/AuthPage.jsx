@@ -24,7 +24,7 @@ export default function AuthPage({ type = "login" }) {
         
         <Link to="/" className="relative z-10 flex items-center gap-2 text-2xl font-bold tracking-tight text-secondary-foreground">
           <BrainCircuit className="w-8 h-8 text-primary" />
-          Oracle AI
+          Interview Buddy
         </Link>
 
         <div className="relative z-10 max-w-lg mb-12">
@@ -59,7 +59,7 @@ export default function AuthPage({ type = "login" }) {
               )}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Email</label>
-                <Input type="email" placeholder="john@example.com" required className="h-12 bg-[#f9fafb]" />
+                <Input type="email" placeholder="Enter your email" required className="h-12 bg-[#f9fafb]" />
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
