@@ -12,7 +12,6 @@ const envSchema = z.object({
   JWT_ACCESS_EXPIRY: z.string().default("15m"),
   EMAIL_TOKEN_EXPIRY_MINUTES: z.coerce.number().int().positive().default(60),
   RESET_TOKEN_EXPIRY_MINUTES: z.coerce.number().int().positive().default(30),
-  DEFAULT_ADMIN_EMAIL: z.string().email().optional(),
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.coerce.number().int().positive().optional(),
   SMTP_SECURE: z
