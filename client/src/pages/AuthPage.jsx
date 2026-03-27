@@ -5,14 +5,94 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+
 export default function AuthPage({ type = "login" }) {
   const isLogin = type === "login";
   const navigate = useNavigate();
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const updateField = (field) => (event) => {
+    setForm((prev) => ({ ...prev, [field]: event.target.value }));
+  };
+
+  const callApi = async (path, payload) => {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data.message || "Request failed");
+    }
+
+    return data;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Dummy redirection for UI demonstration
-    navigate("/dashboard");
+    setErrorMessage("");
+    setSuccessMessage("");
+    setIsSubmitting(true);
+
+    try {
+      if (isLogin) {
+        const data = await callApi("/auth/login", {
+          email: form.email.trim(),
+          password: form.password,
+        });
+
+        localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("authUser", JSON.stringify(data.user));
+        navigate("/dashboard");
+      } else {
+        const data = await callApi("/auth/register", {
+          fullName: form.fullName.trim(),
+          email: form.email.trim(),
+          password: form.password,
+        });
+
+        setSuccessMessage(data.message || "Account created. Please verify your email.");
+      }
+    } catch (error) {
+      setErrorMessage(error.message || "Something went wrong");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!form.email.trim()) {
+      setErrorMessage("Enter your email first, then click Forgot password.");
+      return;
+    }
+
+    setErrorMessage("");
+    setSuccessMessage("");
+    setIsSubmitting(true);
+
+    try {
+      const data = await callApi("/auth/forgot-password", {
+        email: form.email.trim(),
+      });
+      setSuccessMessage(data.message || "Password reset instructions sent.");
+    } catch (error) {
+      setErrorMessage(error.message || "Could not start reset flow");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -54,22 +134,61 @@ export default function AuthPage({ type = "login" }) {
               {!isLogin && (
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">Full Name</label>
-                  <Input type="text" placeholder="John Doe" required className="h-12 bg-[#f9fafb]" />
+                  <Input
+                    type="text"
+                    placeholder="John Doe"
+                    required
+                    className="h-12 bg-[#f9fafb]"
+                    value={form.fullName}
+                    onChange={updateField("fullName")}
+                    disabled={isSubmitting}
+                  />
                 </div>
               )}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Email</label>
-                <Input type="email" placeholder="Enter your email" required className="h-12 bg-[#f9fafb]" />
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  required
+                  className="h-12 bg-[#f9fafb]"
+                  value={form.email}
+                  onChange={updateField("email")}
+                  disabled={isSubmitting}
+                />
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <label className="text-sm font-medium text-foreground">Password</label>
-                  {isLogin && <a href="#" className="text-xs text-primary hover:underline">Forgot password?</a>}
+                  {isLogin && (
+                    <button
+                      type="button"
+                      className="text-xs text-primary hover:underline"
+                      onClick={handleForgotPassword}
+                      disabled={isSubmitting}
+                    >
+                      Forgot password?
+                    </button>
+                  )}
                 </div>
-                <Input type="password" placeholder="••••••••" required className="h-12 bg-[#f9fafb]" />
+                <Input
+                  type="password"
+                  placeholder="••••••••"
+                  required
+                  className="h-12 bg-[#f9fafb]"
+                  value={form.password}
+                  onChange={updateField("password")}
+                  disabled={isSubmitting}
+                />
               </div>
-              <Button type="submit" className="w-full h-12 mt-6 text-base tracking-wide rounded-lg">
-                {isLogin ? "Sign In" : "Sign Up"}
+              {errorMessage && <p className="text-sm text-red-600">{errorMessage}</p>}
+              {successMessage && <p className="text-sm text-green-700">{successMessage}</p>}
+              <Button
+                type="submit"
+                className="w-full h-12 mt-6 text-base tracking-wide rounded-lg"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Please wait..." : isLogin ? "Sign In" : "Sign Up"}
               </Button>
             </form>
 
