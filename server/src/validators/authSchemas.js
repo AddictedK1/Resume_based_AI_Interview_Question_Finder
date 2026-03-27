@@ -4,10 +4,10 @@ const passwordSchema = z
   .string()
   .min(8, "Password must be at least 8 characters")
   .max(128, "Password too long")
-  .regex(/[a-z]/, "Password must include a lowercase letter")
-  .regex(/[A-Z]/, "Password must include an uppercase letter")
-  .regex(/[0-9]/, "Password must include a number")
-  .regex(/[^A-Za-z0-9]/, "Password must include a special character");
+  .regex(/[a-z]/, "Password must include a lowercase letter (a-z)")
+  .regex(/[A-Z]/, "Password must include an uppercase letter (A-Z)")
+  .regex(/[0-9]/, "Password must include a number (0-9)")
+  .regex(/[^A-Za-z0-9]/, "Password must include a special character like @, #, $, %, &, *, !, etc.");
 
 export const registerSchema = z.object({
   fullName: z.string().min(2).max(80),

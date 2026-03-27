@@ -56,7 +56,7 @@ export default function AuthPage({ type = "login" }) {
 
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("authUser", JSON.stringify(data.user));
-        navigate("/dashboard");
+        navigate(data.user?.role === "admin" ? "/admin" : "/dashboard");
       } else {
         const data = await callApi("/auth/register", {
           fullName: form.fullName.trim(),

@@ -1,5 +1,4 @@
 import { env } from "../config/env.js";
-import { ROLES } from "../constants/roles.js";
 import { User } from "../models/User.js";
 import { sendPasswordResetEmail, sendVerificationEmail } from "../services/emailService.js";
 import { ApiError } from "../utils/apiError.js";
@@ -30,18 +29,12 @@ export const register = async (req, res) => {
     Date.now() + env.EMAIL_TOKEN_EXPIRY_MINUTES * 60 * 1000,
   );
 
-  const role =
-    env.DEFAULT_ADMIN_EMAIL && email.toLowerCase() === env.DEFAULT_ADMIN_EMAIL.toLowerCase()
-      ? ROLES.ADMIN
-      : ROLES.USER;
-
   const passwordHash = await hashPassword(password);
 
   const user = await User.create({
     fullName,
     email,
     passwordHash,
-    role,
     emailVerificationTokenHash,
     emailVerificationTokenExpiresAt,
   });

@@ -46,11 +46,18 @@ Server runs at `http://localhost:5000` by default.
 - `POST /api/auth/reset-password`
 - `GET /api/auth/me`
 - `GET /api/auth/admin/ping`
+- `POST /api/questions/submissions`
+- `GET /api/questions/submissions/me`
+- `GET /api/admin/moderation/stats`
+- `GET /api/admin/moderation/notifications`
+- `GET /api/admin/moderation/pending`
+- `POST /api/admin/moderation/submissions/:id/approve`
+- `POST /api/admin/moderation/submissions/:id/reject`
 
 ## Notes
 
 - If SMTP is not configured, verification/reset links are printed in server logs for local development.
-- The email matching `DEFAULT_ADMIN_EMAIL` is assigned the `admin` role during registration.
+- Admin role is never assigned during signup. Promote a trusted user manually in MongoDB by setting `role` to `admin`.
 
 ## Which file to run
 
