@@ -30,7 +30,7 @@ export default function Dashboard() {
       <nav className="sticky top-0 z-40 w-full bg-white/70 backdrop-blur-md border-b border-border/40 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2 text-xl font-bold text-secondary-foreground tracking-tight">
           <BrainCircuit className="w-6 h-6 text-primary" />
-          Oracle AI Workspace
+          Interview Buddy Workspace
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm font-medium text-muted-foreground mr-4">Welcome, John Doe</span>
