@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import ThemeToggle from "@/components/ThemeToggle";
 import {
   ArrowRight,
   Sparkles,
@@ -111,7 +112,7 @@ const TESTIMONIALS = [
 const PRICING = [
   {
     name: "Starter",
-    price: "$0",
+    price: "₹0",
     desc: "Perfect for exploring",
     cta: "Get Started Free",
     featured: false,
@@ -124,7 +125,7 @@ const PRICING = [
   },
   {
     name: "Pro",
-    price: "$19",
+    price: "₹49",
     desc: "For serious job seekers",
     cta: "Start Pro Trial",
     featured: true,
@@ -138,7 +139,7 @@ const PRICING = [
   },
   {
     name: "Enterprise",
-    price: "$49",
+    price: "₹449",
     desc: "For teams & bootcamps",
     cta: "Contact Sales",
     featured: false,
@@ -204,15 +205,15 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#fdfcfb] text-foreground font-sans selection:bg-primary/20 overflow-x-hidden">
+    <div className="min-h-screen bg-white dark:bg-slate-950 text-foreground font-sans selection:bg-primary/20 overflow-x-hidden">
 
       {/* ═══════════════════ NAVIGATION ═══════════════════ */}
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? "bg-white/80 backdrop-blur-xl shadow-lg shadow-black/[0.03]"
-            : "bg-white/70 backdrop-blur-md"
-        } border-b border-border/40`}
+            ? "bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-lg shadow-black/[0.03]"
+            : "bg-white/70 dark:bg-slate-900/70 backdrop-blur-md"
+        } border-b border-border/40 dark:border-slate-700/40`}
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-8 h-16 md:h-20">
           <Link
@@ -232,6 +233,7 @@ export default function LandingPage() {
           </div>
 
           <div className="hidden md:flex items-center gap-4">
+            <ThemeToggle />
             <Link to="/login" className="text-sm font-medium hover:text-primary transition-colors">
               Sign In
             </Link>
@@ -253,12 +255,15 @@ export default function LandingPage() {
 
         {/* Mobile menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-border/40 bg-white/95 backdrop-blur-xl px-6 pb-6 space-y-4">
+          <div className="md:hidden border-t border-border/40 dark:border-slate-700/40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl px-6 pb-6 space-y-4">
             <a href="#features" className="block py-2 text-sm font-medium hover:text-primary" onClick={() => setMobileMenuOpen(false)}>Features</a>
             <a href="#how-it-works" className="block py-2 text-sm font-medium hover:text-primary" onClick={() => setMobileMenuOpen(false)}>How It Works</a>
             <a href="#testimonials" className="block py-2 text-sm font-medium hover:text-primary" onClick={() => setMobileMenuOpen(false)}>Testimonials</a>
             <a href="#pricing" className="block py-2 text-sm font-medium hover:text-primary" onClick={() => setMobileMenuOpen(false)}>Pricing</a>
             <div className="flex gap-3 pt-2">
+              <div className="flex-1">
+                <ThemeToggle />
+              </div>
               <Link to="/login" className="flex-1">
                 <Button variant="outline" className="w-full rounded-full">Sign In</Button>
               </Link>
@@ -305,7 +310,7 @@ export default function LandingPage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="rounded-full text-base h-14 px-8 bg-white/50 backdrop-blur-sm"
+                className="rounded-full text-base h-14 px-8 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm"
               >
                 View Demo
               </Button>
@@ -328,11 +333,11 @@ export default function LandingPage() {
           {/* Right — Dashboard Mockup */}
           <div className="flex-1 w-full relative">
             <div className="absolute -inset-8 bg-gradient-to-br from-orange-200/30 to-amber-200/20 blur-3xl rounded-full pointer-events-none" />
-            <div className="relative bg-white/60 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl shadow-orange-900/10 p-4 animate-float">
-              <div className="bg-white rounded-xl overflow-hidden border border-border/30">
+            <div className="relative bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border border-border/50 dark:border-slate-700/50 rounded-2xl shadow-2xl shadow-orange-900/10 p-4 animate-float">
+              <div className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden border border-border/30 dark:border-slate-700/30">
                 <div className="flex h-[380px]">
                   {/* Sidebar */}
-                  <div className="w-14 bg-muted/60 flex flex-col items-center py-5 gap-5 border-r border-border/30">
+                  <div className="w-14 bg-muted/60 dark:bg-slate-700/60 flex flex-col items-center py-5 gap-5 border-r border-border/30 dark:border-slate-700/30">
                     <BrainCircuit className="w-5 h-5 text-primary" />
                     <Sparkles className="w-5 h-5 text-muted-foreground/40" />
                     <FileText className="w-5 h-5 text-muted-foreground/40" />
@@ -377,7 +382,7 @@ export default function LandingPage() {
                         </p>
                       </div>
                     </div>
-                    <div className="bg-white p-4 rounded-xl shadow-sm border border-border/30 flex items-center gap-4">
+                    <div className="bg-white dark:bg-slate-700 p-4 rounded-xl shadow-sm border border-border/30 dark:border-slate-600/30 flex items-center gap-4">
                       <div className="w-1.5 h-10 bg-primary rounded-full shrink-0" />
                       <p className="text-sm italic">
                         "Tell me about a time you had to pivot based on
@@ -416,7 +421,7 @@ export default function LandingPage() {
             {STATS.map((s) => (
               <Card
                 key={s.label}
-                className="text-center bg-white/60 backdrop-blur-xl border-border/50 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                className="text-center bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
                 <CardContent className="py-6 px-4">
                   <p className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-600">
@@ -444,7 +449,7 @@ export default function LandingPage() {
           {/* Bento grid */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
             {/* Large card */}
-            <Card className="md:col-span-7 bg-white/60 backdrop-blur-xl border-border/50 shadow-lg hover:shadow-xl transition-all duration-300 group overflow-hidden relative">
+            <Card className="md:col-span-7 bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-lg hover:shadow-xl transition-all duration-300 group overflow-hidden relative">
               <CardHeader className="p-8 md:p-10 space-y-4">
                 <span className="text-5xl font-extrabold text-primary/10">01</span>
                 <CardTitle className="text-2xl md:text-3xl font-extrabold tracking-tight">
@@ -462,7 +467,7 @@ export default function LandingPage() {
             </Card>
 
             {/* Medium card */}
-            <Card className="md:col-span-5 bg-gradient-to-br from-orange-50 to-amber-50/50 border-border/50 shadow-lg hover:shadow-xl transition-all duration-300 text-center">
+            <Card className="md:col-span-5 bg-gradient-to-br from-orange-50 to-amber-50/50 dark:from-orange-950/30 dark:to-amber-950/20 border-border/50 dark:border-slate-700/50 shadow-lg hover:shadow-xl transition-all duration-300 text-center">
               <CardContent className="p-8 md:p-10 flex flex-col items-center gap-6">
                 <div className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/20 animate-pulse-slow">
                   <BrainCircuit className="w-8 h-8 text-white" />
@@ -481,7 +486,7 @@ export default function LandingPage() {
             {FEATURES.slice(2).map((f, i) => (
               <Card
                 key={f.title}
-                className="md:col-span-4 bg-white/60 backdrop-blur-xl border-border/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                className="md:col-span-4 bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
                 <CardHeader className="p-6 md:p-8 space-y-3">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -494,7 +499,7 @@ export default function LandingPage() {
             ))}
 
             {/* Wide testimonial card */}
-            <Card className="md:col-span-12 bg-white/60 backdrop-blur-xl border-border/50 shadow-lg hover:shadow-xl transition-all duration-300">
+            <Card className="md:col-span-12 bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-lg hover:shadow-xl transition-all duration-300">
               <CardContent className="p-6 md:p-8 flex flex-col md:flex-row gap-8 items-center">
                 <img
                   alt="Professional using Interview Buddy"
@@ -523,7 +528,7 @@ export default function LandingPage() {
       </section>
 
       {/* ═══════════════════ HOW IT WORKS ═══════════════════ */}
-      <section id="how-it-works" className="py-20 px-6 lg:px-8 bg-muted/30">
+      <section id="how-it-works" className="py-20 px-6 lg:px-8 bg-muted/30 dark:bg-slate-900/50">
         <div className="max-w-7xl mx-auto">
           <SectionHeading
             badge="How It Works"
@@ -540,7 +545,7 @@ export default function LandingPage() {
             {STEPS.map((step, i) => (
               <Card
                 key={step.title}
-                className="relative bg-white/80 backdrop-blur-xl border-border/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden text-center z-10"
+                className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden text-center z-10"
               >
                 <CardContent className="p-8 space-y-5">
                   {/* Step number watermark */}
@@ -595,7 +600,7 @@ export default function LandingPage() {
             {TESTIMONIALS.map((t) => (
               <Card
                 key={t.name}
-                className="bg-white/60 backdrop-blur-xl border-border/50 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 overflow-hidden relative"
+                className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 overflow-hidden relative"
               >
                 <CardContent className="p-8 space-y-5 relative">
                   {/* Watermark */}
@@ -626,7 +631,7 @@ export default function LandingPage() {
       </section>
 
       {/* ═══════════════════ PRICING ═══════════════════ */}
-      <section id="pricing" className="py-20 px-6 lg:px-8 bg-muted/30">
+      <section id="pricing" className="py-20 px-6 lg:px-8 bg-muted/30 dark:bg-slate-900/50">
         <div className="max-w-7xl mx-auto">
           <SectionHeading
             badge="Pricing"
@@ -643,7 +648,7 @@ export default function LandingPage() {
                 className={`relative overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
                   plan.featured
                     ? "bg-secondary-foreground text-secondary shadow-2xl shadow-primary/20 ring-2 ring-primary"
-                    : "bg-white/60 backdrop-blur-xl border-border/50 shadow-lg hover:shadow-xl"
+                    : "bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-lg hover:shadow-xl"
                 }`}
               >
                 {plan.featured && (

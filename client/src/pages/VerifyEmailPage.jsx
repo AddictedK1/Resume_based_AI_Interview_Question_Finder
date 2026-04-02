@@ -54,7 +54,7 @@ export default function VerifyEmailPage() {
   }, [email, token]);
 
   return (
-    <div className="min-h-screen bg-[#fdfcfb] flex items-center justify-center p-6">
+    <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center p-6">
       <Card className="w-full max-w-xl">
         <CardHeader>
           <CardTitle className="text-2xl">

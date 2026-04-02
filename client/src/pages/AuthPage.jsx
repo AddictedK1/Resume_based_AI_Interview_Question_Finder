@@ -4,6 +4,7 @@ import { BrainCircuit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
@@ -96,9 +97,9 @@ export default function AuthPage({ type = "login" }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#fdfcfb] flex">
+    <div className="min-h-screen bg-white dark:bg-slate-950 flex">
       {/* Visual Asymmetric Left Side */}
-      <div className="hidden lg:flex w-[60%] relative flex-col justify-between p-12 overflow-hidden items-start bg-secondary">
+      <div className="hidden lg:flex w-[60%] relative flex-col justify-between p-12 overflow-hidden items-start bg-secondary dark:bg-secondary">
         <div className="absolute inset-0 bg-gradient-to-br from-orange-400/20 to-purple-500/10 pointer-events-none" />
         <div className="absolute -left-[20%] -top-[20%] w-[140%] h-[140%] bg-primary/5 blur-[120px] rounded-full mix-blend-multiply" />
         
@@ -119,17 +120,20 @@ export default function AuthPage({ type = "login" }) {
       </div>
 
       {/* Auth Form Right Side */}
-      <div className="w-full lg:w-[40%] flex items-center justify-center p-8 bg-white relative">
-        <Card className="w-full max-w-md border-transparent shadow-none">
-          <CardHeader className="text-center px-0">
-            <CardTitle className="text-3xl font-extrabold tracking-tight">
+      <div className="w-full lg:w-[40%] flex items-center justify-center p-8 bg-white dark:bg-slate-900 relative">
+        <div className="w-full max-w-md relative space-y-6">
+          <div className="absolute -top-16 right-0">
+            <ThemeToggle />
+          </div>
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
               {isLogin ? "Welcome back" : "Create an account"}
-            </CardTitle>
-            <CardDescription className="text-base mt-2">
+            </h1>
+            <p className="text-base mt-2 text-muted-foreground">
               {isLogin ? "Enter your credentials to access your dashboard." : "Enter your details to generate your first set of questions."}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="px-0">
+            </p>
+          </div>
+          <div className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
                 <div className="space-y-2">
@@ -138,7 +142,7 @@ export default function AuthPage({ type = "login" }) {
                     type="text"
                     placeholder="John Doe"
                     required
-                    className="h-12 bg-[#f9fafb]"
+                    className="h-12 bg-secondary dark:bg-slate-800"
                     value={form.fullName}
                     onChange={updateField("fullName")}
                     disabled={isSubmitting}
@@ -151,7 +155,7 @@ export default function AuthPage({ type = "login" }) {
                   type="email"
                   placeholder="Enter your email"
                   required
-                  className="h-12 bg-[#f9fafb]"
+                  className="h-12 bg-secondary dark:bg-slate-800"
                   value={form.email}
                   onChange={updateField("email")}
                   disabled={isSubmitting}
@@ -175,7 +179,7 @@ export default function AuthPage({ type = "login" }) {
                   type="password"
                   placeholder="••••••••"
                   required
-                  className="h-12 bg-[#f9fafb]"
+                  className="h-12 bg-secondary dark:bg-slate-800"
                   value={form.password}
                   onChange={updateField("password")}
                   disabled={isSubmitting}
@@ -198,9 +202,10 @@ export default function AuthPage({ type = "login" }) {
                 {isLogin ? "Sign up" : "Sign in"}
               </Link>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
+
