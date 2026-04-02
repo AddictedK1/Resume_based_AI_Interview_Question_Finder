@@ -10,6 +10,7 @@ const envSchema = z.object({
   MONGODB_URI: z.string().min(1),
   JWT_ACCESS_SECRET: z.string().min(32),
   JWT_ACCESS_EXPIRY: z.string().default("15m"),
+  JWT_REFRESH_SECRET: z.string().min(32),
   EMAIL_TOKEN_EXPIRY_MINUTES: z.coerce.number().int().positive().default(60),
   RESET_TOKEN_EXPIRY_MINUTES: z.coerce.number().int().positive().default(30),
   SMTP_HOST: z.string().optional(),

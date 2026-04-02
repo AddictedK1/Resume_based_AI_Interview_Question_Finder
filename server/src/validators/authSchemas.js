@@ -18,6 +18,7 @@ export const registerSchema = z.object({
 export const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
+  sessionDays: z.union([z.literal(1), z.literal(7), z.literal(30)]).optional(),
 });
 
 export const verifyEmailSchema = z.object({

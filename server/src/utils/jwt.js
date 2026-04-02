@@ -9,3 +9,11 @@ export const signAccessToken = (payload) =>
   });
 
 export const verifyAccessToken = (token) => jwt.verify(token, env.JWT_ACCESS_SECRET);
+
+export const signRefreshToken = (payload, expiresIn) =>
+  jwt.sign(payload, env.JWT_REFRESH_SECRET, {
+    expiresIn,
+    issuer: "resume-ai-auth-server",
+  });
+
+export const verifyRefreshToken = (token) => jwt.verify(token, env.JWT_REFRESH_SECRET);

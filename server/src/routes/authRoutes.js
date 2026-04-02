@@ -4,7 +4,9 @@ import {
   adminPing,
   forgotPassword,
   login,
+  logout,
   me,
+  refresh,
   register,
   resendVerification,
   resetPassword,
@@ -36,6 +38,8 @@ authRouter.post(
   asyncHandler(resendVerification),
 );
 authRouter.post("/login", authLimiter, validate(loginSchema), asyncHandler(login));
+authRouter.post("/refresh", asyncHandler(refresh));
+authRouter.post("/logout", asyncHandler(logout));
 authRouter.post(
   "/forgot-password",
   authLimiter,

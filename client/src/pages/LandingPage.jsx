@@ -1,13 +1,14 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import ThemeToggle from "@/components/ThemeToggle";
+import { fadeUp, getFadeUpWithDelay, staggerContainer, viewportSettings } from "@/lib/motion";
 import {
   ArrowRight,
   Sparkles,
   FileText,
-  Target,
   BrainCircuit,
   Upload,
   BarChart3,
@@ -276,7 +277,13 @@ export default function LandingPage() {
       </nav>
 
       {/* ═══════════════════ HERO SECTION ═══════════════════ */}
-      <section className="pt-32 md:pt-40 pb-16 px-6 lg:px-8">
+      <motion.section
+        className="pt-32 md:pt-40 pb-16 px-6 lg:px-8"
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewportSettings}
+        variants={fadeUp}
+      >
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
           {/* Left — copy */}
           <div className="flex-1 text-center lg:text-left space-y-8">
@@ -395,10 +402,16 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ═══════════════════ TRUSTED BY + STATS ═══════════════════ */}
-      <section className="py-20 px-6 lg:px-8">
+      <motion.section
+        className="py-20 px-6 lg:px-8"
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewportSettings}
+        variants={fadeUp}
+      >
         <div className="max-w-7xl mx-auto space-y-12">
           {/* Company logos */}
           <div className="text-center space-y-8">
@@ -417,26 +430,35 @@ export default function LandingPage() {
             </div>
           </div>
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {STATS.map((s) => (
-              <Card
-                key={s.label}
-                className="text-center bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-              >
-                <CardContent className="py-6 px-4">
-                  <p className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-600">
-                    {s.value}
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2">{s.label}</p>
-                </CardContent>
-              </Card>
+          <motion.div
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
+            variants={staggerContainer}
+          >
+            {STATS.map((s, index) => (
+              <motion.div key={s.label} variants={getFadeUpWithDelay(index * 0.06)}>
+                <Card className="text-center bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                  <CardContent className="py-6 px-4">
+                    <p className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-600">
+                      {s.value}
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-2">{s.label}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ═══════════════════ FEATURES ═══════════════════ */}
-      <section id="features" className="py-20 px-6 lg:px-8">
+      <motion.section
+        id="features"
+        className="py-20 px-6 lg:px-8"
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewportSettings}
+        variants={fadeUp}
+      >
         <div className="max-w-7xl mx-auto">
           <SectionHeading
             badge="Features"
@@ -525,10 +547,17 @@ export default function LandingPage() {
             </Card>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ═══════════════════ HOW IT WORKS ═══════════════════ */}
-      <section id="how-it-works" className="py-20 px-6 lg:px-8 bg-muted/30 dark:bg-slate-900/50">
+      <motion.section
+        id="how-it-works"
+        className="py-20 px-6 lg:px-8 bg-muted/30 dark:bg-slate-900/50"
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewportSettings}
+        variants={fadeUp}
+      >
         <div className="max-w-7xl mx-auto">
           <SectionHeading
             badge="How It Works"
@@ -583,10 +612,17 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ═══════════════════ TESTIMONIALS ═══════════════════ */}
-      <section id="testimonials" className="py-20 px-6 lg:px-8">
+      <motion.section
+        id="testimonials"
+        className="py-20 px-6 lg:px-8"
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewportSettings}
+        variants={fadeUp}
+      >
         <div className="max-w-7xl mx-auto">
           <SectionHeading
             badge="Testimonials"
@@ -596,42 +632,48 @@ export default function LandingPage() {
             description="See how Interview Buddy has helped professionals land roles at top-tier companies."
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={staggerContainer}>
             {TESTIMONIALS.map((t) => (
-              <Card
-                key={t.name}
-                className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 overflow-hidden relative"
-              >
-                <CardContent className="p-8 space-y-5 relative">
-                  {/* Watermark */}
-                  <Quote className="absolute top-4 right-4 w-16 h-16 text-primary/[0.06] pointer-events-none" />
+              <motion.div key={t.name} variants={fadeUp}>
+                <Card className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 overflow-hidden relative">
+                  <CardContent className="p-8 space-y-5 relative">
+                    {/* Watermark */}
+                    <Quote className="absolute top-4 right-4 w-16 h-16 text-primary/[0.06] pointer-events-none" />
 
-                  <div className="flex gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 text-primary fill-primary" />
-                    ))}
-                  </div>
-
-                  <p className="text-sm leading-relaxed relative z-10">"{t.quote}"</p>
-
-                  <div className="flex items-center gap-3 pt-2">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white text-sm font-bold shadow-md">
-                      {t.initials}
+                    <div className="flex gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 text-primary fill-primary" />
+                      ))}
                     </div>
-                    <div>
-                      <p className="font-bold text-sm">{t.name}</p>
-                      <p className="text-xs text-muted-foreground">{t.role}</p>
+
+                    <p className="text-sm leading-relaxed relative z-10">"{t.quote}"</p>
+
+                    <div className="flex items-center gap-3 pt-2">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white text-sm font-bold shadow-md">
+                        {t.initials}
+                      </div>
+                      <div>
+                        <p className="font-bold text-sm">{t.name}</p>
+                        <p className="text-xs text-muted-foreground">{t.role}</p>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ═══════════════════ PRICING ═══════════════════ */}
-      <section id="pricing" className="py-20 px-6 lg:px-8 bg-muted/30 dark:bg-slate-900/50">
+      <motion.section
+        id="pricing"
+        className="py-20 px-6 lg:px-8 bg-muted/30 dark:bg-slate-900/50"
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewportSettings}
+        variants={fadeUp}
+      >
         <div className="max-w-7xl mx-auto">
           <SectionHeading
             badge="Pricing"
@@ -641,70 +683,77 @@ export default function LandingPage() {
             description="Start for free. Upgrade when you need more power."
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {PRICING.map((plan) => (
-              <Card
-                key={plan.name}
-                className={`relative overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
-                  plan.featured
-                    ? "bg-secondary-foreground text-secondary shadow-2xl shadow-primary/20 ring-2 ring-primary"
-                    : "bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-lg hover:shadow-xl"
-                }`}
-              >
-                {plan.featured && (
-                  <div className="absolute -top-0 left-1/2 -translate-x-1/2 translate-y-0 px-4 py-1 bg-gradient-to-r from-orange-500 to-amber-600 rounded-b-lg text-white text-xs font-bold uppercase tracking-wider">
-                    Most Popular
-                  </div>
-                )}
-                <CardContent className="p-8 space-y-6">
-                  <div className="space-y-1 pt-2">
-                    <h3 className="text-xl font-bold">{plan.name}</h3>
-                    <p className={`text-sm ${plan.featured ? "text-secondary/60" : "text-muted-foreground"}`}>
-                      {plan.desc}
-                    </p>
-                  </div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-5xl font-extrabold">{plan.price}</span>
-                    <span className={`text-sm ${plan.featured ? "text-secondary/60" : "text-muted-foreground"}`}>
-                      /month
-                    </span>
-                  </div>
-
-                  {plan.featured ? (
-                    <Button className="w-full rounded-full bg-gradient-to-r from-orange-500 to-amber-600 text-white hover:from-orange-600 hover:to-amber-700 shadow-lg">
-                      {plan.cta}
-                    </Button>
-                  ) : (
-                    <Button variant="outline" className="w-full rounded-full">
-                      {plan.cta}
-                    </Button>
+          <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto" variants={staggerContainer}>
+            {PRICING.map((plan, index) => (
+              <motion.div key={plan.name} variants={getFadeUpWithDelay(index * 0.08)}>
+                <Card
+                  className={`relative overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
+                    plan.featured
+                      ? "bg-secondary-foreground text-secondary shadow-2xl shadow-primary/20 ring-2 ring-primary"
+                      : "bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-lg hover:shadow-xl"
+                  }`}
+                >
+                  {plan.featured && (
+                    <div className="absolute -top-0 left-1/2 -translate-x-1/2 translate-y-0 px-4 py-1 bg-gradient-to-r from-orange-500 to-amber-600 rounded-b-lg text-white text-xs font-bold uppercase tracking-wider">
+                      Most Popular
+                    </div>
                   )}
+                  <CardContent className="p-8 space-y-6">
+                    <div className="space-y-1 pt-2">
+                      <h3 className="text-xl font-bold">{plan.name}</h3>
+                      <p className={`text-sm ${plan.featured ? "text-secondary/60" : "text-muted-foreground"}`}>
+                        {plan.desc}
+                      </p>
+                    </div>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-5xl font-extrabold">{plan.price}</span>
+                      <span className={`text-sm ${plan.featured ? "text-secondary/60" : "text-muted-foreground"}`}>
+                        /month
+                      </span>
+                    </div>
 
-                  <ul className="space-y-3">
-                    {plan.features.map((f) => (
-                      <li key={f.text} className="flex items-center gap-3 text-sm">
-                        {f.included ? (
-                          <CheckCircle2
-                            className={`w-5 h-5 shrink-0 ${
-                              plan.featured ? "text-amber-400" : "text-primary"
-                            }`}
-                          />
-                        ) : (
-                          <X className="w-5 h-5 shrink-0 text-muted-foreground/30" />
-                        )}
-                        <span className={!f.included ? "text-muted-foreground/40" : ""}>{f.text}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
+                    {plan.featured ? (
+                      <Button className="w-full rounded-full bg-gradient-to-r from-orange-500 to-amber-600 text-white hover:from-orange-600 hover:to-amber-700 shadow-lg">
+                        {plan.cta}
+                      </Button>
+                    ) : (
+                      <Button variant="outline" className="w-full rounded-full">
+                        {plan.cta}
+                      </Button>
+                    )}
+
+                    <ul className="space-y-3">
+                      {plan.features.map((f) => (
+                        <li key={f.text} className="flex items-center gap-3 text-sm">
+                          {f.included ? (
+                            <CheckCircle2
+                              className={`w-5 h-5 shrink-0 ${
+                                plan.featured ? "text-amber-400" : "text-primary"
+                              }`}
+                            />
+                          ) : (
+                            <X className="w-5 h-5 shrink-0 text-muted-foreground/30" />
+                          )}
+                          <span className={!f.included ? "text-muted-foreground/40" : ""}>{f.text}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ═══════════════════ CTA ═══════════════════ */}
-      <section className="py-8 px-6 lg:px-8">
+      <motion.section
+        className="py-8 px-6 lg:px-8"
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewportSettings}
+        variants={fadeUp}
+      >
         <div className="max-w-7xl mx-auto rounded-3xl overflow-hidden relative bg-secondary-foreground text-secondary py-20 md:py-28 px-8 text-center">
           <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/20 to-transparent pointer-events-none" />
           <div className="absolute inset-0 bg-gradient-to-bl from-amber-500/10 to-transparent pointer-events-none" />
@@ -735,7 +784,7 @@ export default function LandingPage() {
             </p>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ═══════════════════ FOOTER ═══════════════════ */}
       <footer className="border-t border-border/40 py-16 md:py-20 px-6 md:px-8 bg-[#fdfcfb]">

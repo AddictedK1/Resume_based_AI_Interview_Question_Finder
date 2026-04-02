@@ -15,8 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ThemeToggle from "@/components/ThemeToggle";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+import { authFetch, clearAuthSession, ensureSession, logoutSession } from "@/lib/auth";
 
 const statusBadgeClass = {
   pending: "bg-amber-100 text-amber-800",
@@ -52,42 +51,46 @@ export default function AdminPanel() {
   });
 
   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
-    const rawUser = localStorage.getItem("authUser");
+    const bootstrapSession = async () => {
+      const valid = await ensureSession();
+      const accessToken = localStorage.getItem("accessToken");
+      const rawUser = localStorage.getItem("authUser");
 
-    if (!accessToken || !rawUser) {
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const parsedUser = JSON.parse(rawUser);
-      if (parsedUser.role !== "admin") {
-        navigate("/dashboard", {
-          replace: true,
-          state: {
-            adminAccessDenied: true,
-            message: "Only the admin account can access the admin dashboard.",
-          },
-        });
+      if (!valid || !accessToken || !rawUser) {
+        clearAuthSession();
+        navigate("/login");
         return;
       }
 
-      setUserName(parsedUser.fullName || "Admin");
-      setToken(accessToken);
-    } catch (_error) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("authUser");
-      navigate("/login");
-    }
+      try {
+        const parsedUser = JSON.parse(rawUser);
+        if (parsedUser.role !== "admin") {
+          navigate("/dashboard", {
+            replace: true,
+            state: {
+              adminAccessDenied: true,
+              message: "Only the admin account can access the admin dashboard.",
+            },
+          });
+          return;
+        }
+
+        setUserName(parsedUser.fullName || "Admin");
+        setToken(accessToken);
+      } catch (_error) {
+        clearAuthSession();
+        navigate("/login");
+      }
+    };
+
+    bootstrapSession();
   }, [navigate]);
 
   const fetchJson = async (path, options = {}) => {
-    const response = await fetch(`${API_BASE_URL}${path}`, {
+    const response = await authFetch(path, {
       ...options,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
         ...(options.headers || {}),
       },
     });
@@ -95,12 +98,9 @@ export default function AdminPanel() {
     const data = await response.json().catch(() => ({}));
 
     if (response.status === 401 || response.status === 403) {
-      navigate("/dashboard", {
+      clearAuthSession();
+      navigate("/login", {
         replace: true,
-        state: {
-          adminAccessDenied: true,
-          message: "Only the admin account can access the admin dashboard.",
-        },
       });
       throw new Error("Unauthorized admin access");
     }
@@ -127,6 +127,11 @@ export default function AdminPanel() {
       setPendingSubmissions(pendingData.submissions || []);
       setReviewedSubmissions(reviewedData.submissions || []);
     } catch (error) {
+      if (error.message === "AUTH_REQUIRED") {
+        clearAuthSession();
+        navigate("/login", { replace: true });
+        return;
+      }
       setErrorMessage(error.message || "Could not load admin dashboard data");
     } finally {
       setLoading(false);
@@ -212,9 +217,8 @@ export default function AdminPanel() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("authUser");
+  const handleLogout = async () => {
+    await logoutSession();
     navigate("/login");
   };
 
