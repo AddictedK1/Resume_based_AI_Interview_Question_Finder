@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
@@ -228,15 +229,16 @@ export default function AdminPanel() {
   }, [userName]);
 
   return (
-    <div className="min-h-screen bg-[#fdfcfb] text-foreground font-sans">
+    <div className="min-h-screen bg-white dark:bg-slate-950 text-foreground font-sans">
       <div className="flex">
         <div className="flex-1">
-          <nav className="sticky top-0 z-40 w-full bg-white/70 backdrop-blur-md border-b border-border/40 px-6 py-4 flex items-center justify-between">
+          <nav className="sticky top-0 z-40 w-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border-b border-border/40 dark:border-slate-700/40 px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-2 text-xl font-bold text-secondary-foreground tracking-tight">
               <BrainCircuit className="w-6 h-6 text-primary" />
               Interview Buddy Admin
             </div>
             <div className="flex items-center gap-3">
+              <ThemeToggle />
               <ShieldCheck className="w-4 h-4 text-green-600" />
               <span className="text-sm text-muted-foreground">Signed in as {userName}</span>
               <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm shadow-md">
@@ -263,13 +265,13 @@ export default function AdminPanel() {
                   value={searchText}
                   onChange={(event) => setSearchText(event.target.value)}
                   placeholder="Search pending submissions"
-                  className="h-9 pl-9 bg-muted/50 border-transparent focus:bg-white"
+                  className="h-9 pl-9 bg-secondary dark:bg-slate-800 border-transparent focus:bg-white dark:focus:bg-slate-700"
                 />
               </form>
             </div>
 
             <div className="grid gap-6 md:grid-cols-4 mb-8 relative z-10">
-              <Card className="bg-white/70 backdrop-blur-xl border-border/50 shadow-sm">
+              <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-sm">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm text-muted-foreground">Total Users</CardTitle>
                 </CardHeader>
@@ -277,7 +279,7 @@ export default function AdminPanel() {
                   <div className="text-2xl font-bold">{stats.totalUsers}</div>
                 </CardContent>
               </Card>
-              <Card className="bg-white/70 backdrop-blur-xl border-border/50 shadow-sm">
+              <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-sm">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm text-muted-foreground">Pending</CardTitle>
                 </CardHeader>
@@ -285,7 +287,7 @@ export default function AdminPanel() {
                   <div className="text-2xl font-bold text-amber-700">{stats.pendingSubmissions}</div>
                 </CardContent>
               </Card>
-              <Card className="bg-white/70 backdrop-blur-xl border-border/50 shadow-sm">
+              <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-sm">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm text-muted-foreground">Approved</CardTitle>
                 </CardHeader>
@@ -293,7 +295,7 @@ export default function AdminPanel() {
                   <div className="text-2xl font-bold text-green-700">{stats.approvedSubmissions}</div>
                 </CardContent>
               </Card>
-              <Card className="bg-white/70 backdrop-blur-xl border-border/50 shadow-sm">
+              <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-sm">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm text-muted-foreground">Rejected</CardTitle>
                 </CardHeader>
@@ -304,19 +306,19 @@ export default function AdminPanel() {
             </div>
 
             {errorMessage && (
-              <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <div className="mb-4 rounded-md border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950 px-4 py-3 text-sm text-red-700 dark:text-red-400">
                 {errorMessage}
               </div>
             )}
 
             {successMessage && (
-              <div className="mb-4 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+              <div className="mb-4 rounded-md border border-green-200 dark:border-green-900 bg-green-50 dark:bg-green-950 px-4 py-3 text-sm text-green-700 dark:text-green-400">
                 {successMessage}
               </div>
             )}
 
-            <Card className="mb-8 bg-white/70 backdrop-blur-xl border-border/50 shadow-sm relative z-10">
-              <CardHeader className="border-b border-border/40 pb-4">
+            <Card className="mb-8 bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-sm relative z-10">
+              <CardHeader className="border-b border-border/40 dark:border-slate-700/40 pb-4">
                 <CardTitle className="flex items-center gap-2">
                   <PlusCircle className="w-5 h-5 text-primary" /> Add Question To Dataset
                 </CardTitle>
@@ -326,7 +328,7 @@ export default function AdminPanel() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Question</label>
                     <textarea
-                      className="w-full min-h-[100px] rounded-md border border-input bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      className="w-full min-h-[100px] rounded-md border border-input bg-secondary dark:bg-slate-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                       placeholder="Enter a high-quality interview question"
                       value={adminQuestionForm.questionText}
                       onChange={handleCreateField("questionText")}
@@ -383,8 +385,8 @@ export default function AdminPanel() {
               </CardContent>
             </Card>
 
-            <Card className="bg-white/70 backdrop-blur-xl border-border/50 shadow-sm relative z-10 overflow-hidden">
-              <CardHeader className="border-b border-border/40 pb-4">
+            <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-sm relative z-10 overflow-hidden">
+              <CardHeader className="border-b border-border/40 dark:border-slate-700/40 pb-4">
                 <CardTitle>Pending Contributions ({pendingSubmissions.length})</CardTitle>
               </CardHeader>
               <CardContent className="p-4">
@@ -397,7 +399,7 @@ export default function AdminPanel() {
                 ) : (
                   <div className="space-y-4">
                     {pendingSubmissions.map((submission) => (
-                      <div key={submission._id} className="rounded-lg border border-border/60 bg-white/90 p-4">
+                      <div key={submission._id} className="rounded-lg border border-border/60 dark:border-slate-700/60 bg-white/90 dark:bg-slate-700/90 p-4">
                         <div className="flex items-start justify-between gap-3">
                           <div>
                             <p className="font-medium leading-relaxed">{submission.questionText}</p>
@@ -466,8 +468,8 @@ export default function AdminPanel() {
               </CardContent>
             </Card>
 
-            <Card className="mt-8 bg-white/70 backdrop-blur-xl border-border/50 shadow-sm relative z-10 overflow-hidden">
-              <CardHeader className="border-b border-border/40 pb-4">
+            <Card className="mt-8 bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-sm relative z-10 overflow-hidden">
+              <CardHeader className="border-b border-border/40 dark:border-slate-700/40 pb-4">
                 <CardTitle>Recently Reviewed ({reviewedSubmissions.length})</CardTitle>
               </CardHeader>
               <CardContent className="p-4">
@@ -476,7 +478,7 @@ export default function AdminPanel() {
                 ) : (
                   <div className="space-y-3">
                     {reviewedSubmissions.map((submission) => (
-                      <div key={submission._id} className="rounded-lg border border-border/60 bg-white/90 p-3">
+                      <div key={submission._id} className="rounded-lg border border-border/60 dark:border-slate-700/60 bg-white/90 dark:bg-slate-700/90 p-3">
                         <p className="text-sm font-medium">{submission.questionText}</p>
                         <div className="mt-2 flex items-center gap-2 text-xs">
                           <span className={`rounded-full px-2 py-1 uppercase ${statusBadgeClass[submission.status]}`}>

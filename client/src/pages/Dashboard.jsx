@@ -13,6 +13,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
@@ -165,14 +166,15 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f6f0] text-foreground font-sans">
+    <div className="min-h-screen bg-white dark:bg-slate-950 text-foreground font-sans">
       {/* Top Navbar */}
-      <nav className="sticky top-0 z-40 w-full bg-white/70 backdrop-blur-md border-b border-border/40 px-6 py-4 flex items-center justify-between">
+      <nav className="sticky top-0 z-40 w-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border-b border-border/40 dark:border-slate-700/40 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2 text-xl font-bold text-secondary-foreground tracking-tight">
           <BrainCircuit className="w-6 h-6 text-primary" />
           Interview Buddy Workspace
         </div>
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           {user?.role === "admin" && (
             <Link to="/admin">
               <Button variant="outline" size="sm" className="gap-2">
@@ -203,7 +205,7 @@ export default function Dashboard() {
 
         {/* Left Side: Upload & Input Zone */}
         <div className="lg:col-span-5 space-y-6 relative z-10">
-          <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-sm">
+          <Card className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-sm">
             <CardHeader>
               <CardTitle>Resume Parsing</CardTitle>
               <CardDescription>Upload your latest resume (PDF) for sentient analysis.</CardDescription>
@@ -211,7 +213,7 @@ export default function Dashboard() {
             <CardContent>
               {!resumeLoaded ? (
                 <div 
-                  className="border-2 border-dashed border-border rounded-xl p-8 flex flex-col items-center justify-center gap-4 bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
+                  className="border-2 border-dashed border-border dark:border-slate-700 rounded-xl p-8 flex flex-col items-center justify-center gap-4 bg-muted/30 dark:bg-slate-700/30 hover:bg-muted/50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer"
                   onClick={handleUpload}
                 >
                   {isUploading ? (
@@ -225,7 +227,7 @@ export default function Dashboard() {
                   </div>
                 </div>
               ) : (
-                <div className="border border-border rounded-xl p-4 flex items-center gap-4 bg-white/80">
+                <div className="border border-border dark:border-slate-700 rounded-xl p-4 flex items-center gap-4 bg-white/80 dark:bg-slate-800/80">
                   <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
                     <File className="w-6 h-6" />
                   </div>
@@ -239,7 +241,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-sm disabled:opacity-50">
+          <Card className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-sm disabled:opacity-50">
             <CardHeader>
               <CardTitle>Target Archetype</CardTitle>
               <CardDescription>Configure the AI persona for your mock questions.</CardDescription>
@@ -254,7 +256,7 @@ export default function Dashboard() {
               </div>
               <div className="space-y-2 pt-2">
                 <label className="text-sm font-medium">Target Role / Seniority</label>
-                <input type="text" placeholder="e.g. Senior Frontend Engineer" className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" />
+                <input type="text" placeholder="e.g. Senior Frontend Engineer" className="flex h-10 w-full rounded-md border border-input bg-secondary dark:bg-slate-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" />
               </div>
               <Button 
                 className="w-full mt-4 h-12 rounded-lg text-base shadow-lg shadow-primary/20" 
@@ -270,7 +272,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-sm">
+          <Card className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-sm">
             <CardHeader>
               <CardTitle>Contribute Interview Question</CardTitle>
               <CardDescription>
@@ -282,7 +284,7 @@ export default function Dashboard() {
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Question</label>
                   <textarea
-                    className="w-full min-h-[100px] rounded-md border border-input bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    className="w-full min-h-[100px] rounded-md border border-input bg-secondary dark:bg-slate-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                     placeholder="Enter a real interview question you faced"
                     value={contributionForm.questionText}
                     onChange={handleContributionField("questionText")}
@@ -345,7 +347,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/60 backdrop-blur-xl border-border/50 shadow-sm">
+          <Card className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-sm">
             <CardHeader>
               <CardTitle>Your Submitted Questions</CardTitle>
               <CardDescription>Track whether admin has reviewed your contributions.</CardDescription>
@@ -356,7 +358,7 @@ export default function Dashboard() {
               ) : (
                 <div className="space-y-3">
                   {submissions.slice(0, 5).map((item) => (
-                    <div key={item._id} className="rounded-md border border-border/60 bg-white/80 p-3">
+                    <div key={item._id} className="rounded-md border border-border/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-700/80 p-3">
                       <p className="text-sm font-medium text-foreground">{item.questionText}</p>
                       <div className="mt-2 flex items-center gap-2 text-xs">
                         <span className="rounded-full bg-primary/10 px-2 py-1 text-primary uppercase">
@@ -388,18 +390,18 @@ export default function Dashboard() {
 
           <div className="space-y-6">
             {/* Example Question List (Static for UI Demo) */}
-            <Card className="bg-white/80 backdrop-blur-xl border-border/50 shadow-md hover:-translate-y-1 transition-transform duration-300">
+            <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-md hover:-translate-y-1 transition-transform duration-300">
               <CardHeader className="pb-4">
                 <div className="flex gap-2 mb-3">
-                  <span className="px-3 py-1 bg-orange-100 text-orange-700 text-xs font-bold rounded-full tracking-wider uppercase">System Design</span>
-                  <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full tracking-wider uppercase">Deep Dive</span>
+                  <span className="px-3 py-1 bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-400 text-xs font-bold rounded-full tracking-wider uppercase">System Design</span>
+                  <span className="px-3 py-1 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400 text-xs font-bold rounded-full tracking-wider uppercase">Deep Dive</span>
                 </div>
                 <CardTitle className="text-lg leading-relaxed">
                   "I see you implemented a micro-frontend architecture at your last role. How did you handle shared state management and cross-app routing without causing significant latency?"
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="bg-muted/40 p-4 rounded-lg border border-border/40">
+                <div className="bg-muted/40 dark:bg-slate-700/40 p-4 rounded-lg border border-border/40 dark:border-slate-700/40">
                   <p className="text-sm text-muted-foreground">
                     <strong className="text-foreground">Why the Oracle asks:</strong> Highlighting your experience from "TechCorp" block in your resume. Evaluates your understanding of complex architecture integration strategies.
                   </p>
@@ -407,17 +409,17 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            <Card className="bg-white/80 backdrop-blur-xl border-border/50 shadow-md hover:-translate-y-1 transition-transform duration-300">
+            <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-md hover:-translate-y-1 transition-transform duration-300">
               <CardHeader className="pb-4">
                 <div className="flex gap-2 mb-3">
-                  <span className="px-3 py-1 bg-rose-100 text-rose-700 text-xs font-bold rounded-full tracking-wider uppercase">Behavioral</span>
+                  <span className="px-3 py-1 bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-400 text-xs font-bold rounded-full tracking-wider uppercase">Behavioral</span>
                 </div>
                 <CardTitle className="text-lg leading-relaxed">
                   "Tell me about a time when a critical bug slipped into production due to a flaw in your team's CI/CD pipeline. How did you diagnose the root cause, address it, and prevent recurrence?"
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="bg-muted/40 p-4 rounded-lg border border-border/40">
+                <div className="bg-muted/40 dark:bg-slate-700/40 p-4 rounded-lg border border-border/40 dark:border-slate-700/40">
                   <p className="text-sm text-muted-foreground">
                     <strong className="text-foreground">Why the Oracle asks:</strong> Addresses the transition mentioned in your resume from manual QA to automated deployment. Evaluates problem-solving under pressure.
                   </p>
