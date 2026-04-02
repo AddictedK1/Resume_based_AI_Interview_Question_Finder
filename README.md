@@ -48,3 +48,21 @@ A tool where a CS/IT student can upload their resume 10 minutes before an interv
 ---
 
 *More documentation coming as the project develops.*
+
+## Dependencies(.env requirements)
+NODE_ENV
+PORT
+FRONTEND_URL
+MONGODB_URI
+JWT_ACCESS_SECRET
+JWT_ACCESS_EXPIRY
+EMAIL_TOKEN_EXPIRY_MINUTES
+RESET_TOKEN_EXPIRY_MINUTES
+DEFAULT_ADMIN_EMAIL
+
+SMTP_HOST
+SMTP_PORT
+SMTP_SECURE
+SMTP_USER
+SMTP_PASS
+EMAIL_FROM
