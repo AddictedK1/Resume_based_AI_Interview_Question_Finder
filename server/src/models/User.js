@@ -48,6 +48,14 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    refreshTokenHash: {
+      type: String,
+      default: null,
+    },
+    refreshTokenExpiresAt: {
+      type: Date,
+      default: null,
+    },
     lastLoginAt: {
       type: Date,
       default: null,

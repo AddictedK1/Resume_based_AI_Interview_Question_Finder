@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "motion/react";
 import { BrainCircuit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import ThemeToggle from "@/components/ThemeToggle";
+import { fadeUp, getFadeUpWithDelay } from "@/lib/motion";
+import { clearAuthSession, ensureSession, setAuthSession } from "@/lib/auth";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
@@ -15,10 +18,28 @@ export default function AuthPage({ type = "login" }) {
     fullName: "",
     email: "",
     password: "",
+    sessionDays: "7",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    const hydrateSession = async () => {
+      const valid = await ensureSession();
+      if (!valid) return;
+
+      try {
+        const storedUser = localStorage.getItem("authUser");
+        const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+        navigate(parsedUser?.role === "admin" ? "/admin" : "/dashboard", { replace: true });
+      } catch (_error) {
+        clearAuthSession();
+      }
+    };
+
+    hydrateSession();
+  }, [navigate]);
 
   const updateField = (field) => (event) => {
     setForm((prev) => ({ ...prev, [field]: event.target.value }));
@@ -27,6 +48,7 @@ export default function AuthPage({ type = "login" }) {
   const callApi = async (path, payload) => {
     const response = await fetch(`${API_BASE_URL}${path}`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -36,7 +58,11 @@ export default function AuthPage({ type = "login" }) {
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      throw new Error(data.message || "Request failed");
+      const validationMessage = Array.isArray(data.errors)
+        ? data.errors.map((item) => item.message).filter(Boolean).join(" ")
+        : "";
+
+      throw new Error(validationMessage || data.message || "Request failed");
     }
 
     return data;
@@ -53,10 +79,14 @@ export default function AuthPage({ type = "login" }) {
         const data = await callApi("/auth/login", {
           email: form.email.trim(),
           password: form.password,
+          sessionDays: Number(form.sessionDays),
         });
 
-        localStorage.setItem("accessToken", data.accessToken);
-        localStorage.setItem("authUser", JSON.stringify(data.user));
+        setAuthSession({
+          accessToken: data.accessToken,
+          user: data.user,
+          sessionDays: data.sessionDays,
+        });
         navigate(data.user?.role === "admin" ? "/admin" : "/dashboard");
       } else {
         const data = await callApi("/auth/register", {
@@ -99,7 +129,12 @@ export default function AuthPage({ type = "login" }) {
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 flex">
       {/* Visual Asymmetric Left Side */}
-      <div className="hidden lg:flex w-[60%] relative flex-col justify-between p-12 overflow-hidden items-start bg-secondary dark:bg-secondary">
+      <motion.div
+        className="hidden lg:flex w-[60%] relative flex-col justify-between p-12 overflow-hidden items-start bg-secondary dark:bg-secondary"
+        initial="hidden"
+        animate="visible"
+        variants={fadeUp}
+      >
         <div className="absolute inset-0 bg-gradient-to-br from-orange-400/20 to-purple-500/10 pointer-events-none" />
         <div className="absolute -left-[20%] -top-[20%] w-[140%] h-[140%] bg-primary/5 blur-[120px] rounded-full mix-blend-multiply" />
         
@@ -117,10 +152,15 @@ export default function AuthPage({ type = "login" }) {
             The Digital Oracle prepares you for exactly what your dream company will ask.
           </p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Auth Form Right Side */}
-      <div className="w-full lg:w-[40%] flex items-center justify-center p-8 bg-white dark:bg-slate-900 relative">
+      <motion.div
+        className="w-full lg:w-[40%] flex items-center justify-center p-8 bg-white dark:bg-slate-900 relative"
+        initial="hidden"
+        animate="visible"
+        variants={getFadeUpWithDelay(0.12)}
+      >
         <div className="w-full max-w-md relative space-y-6">
           <div className="absolute -top-16 right-0">
             <ThemeToggle />
@@ -185,6 +225,21 @@ export default function AuthPage({ type = "login" }) {
                   disabled={isSubmitting}
                 />
               </div>
+              {isLogin && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">Remember me</label>
+                  <select
+                    className="h-12 w-full rounded-md border border-input bg-secondary px-3 text-sm dark:bg-slate-800"
+                    value={form.sessionDays}
+                    onChange={updateField("sessionDays")}
+                    disabled={isSubmitting}
+                  >
+                    <option value="1">1 day</option>
+                    <option value="7">7 days</option>
+                    <option value="30">30 days</option>
+                  </select>
+                </div>
+              )}
               {errorMessage && <p className="text-sm text-red-600">{errorMessage}</p>}
               {successMessage && <p className="text-sm text-green-700">{successMessage}</p>}
               <Button
@@ -204,7 +259,7 @@ export default function AuthPage({ type = "login" }) {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
 import {
   BrainCircuit,
   UploadCloud,
@@ -14,17 +15,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import ThemeToggle from "@/components/ThemeToggle";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+import { fadeUp, getFadeUpWithDelay } from "@/lib/motion";
+import { authFetch, clearAuthSession, ensureSession, logoutSession } from "@/lib/auth";
 
 export default function Dashboard() {
   const location = useLocation();
   const navigate = useNavigate();
+  const resumeInputRef = useRef(null);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [resumeLoaded, setResumeLoaded] = useState(false);
+  const [resumeFileName, setResumeFileName] = useState("");
+  const [extractedSkills, setExtractedSkills] = useState([]);
+  const [resumeError, setResumeError] = useState("");
+  const [resumeSuccess, setResumeSuccess] = useState("");
   const [submissionLoading, setSubmissionLoading] = useState(false);
   const [submissions, setSubmissions] = useState([]);
   const [submissionError, setSubmissionError] = useState("");
@@ -36,35 +42,48 @@ export default function Dashboard() {
     seenInInterview: "no",
   });
 
+  const handleAuthFailure = (error) => {
+    if (error?.message !== "AUTH_REQUIRED") return false;
+    clearAuthSession();
+    navigate("/login", { replace: true });
+    return true;
+  };
+
   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
-    const authUser = localStorage.getItem("authUser");
-    if (!authUser || !accessToken) {
-      navigate("/login");
-      return;
-    }
-    try {
-      const parsedUser = JSON.parse(authUser);
-      if (parsedUser.role === "admin") {
-        navigate("/admin", { replace: true });
+    const bootstrapSession = async () => {
+      const valid = await ensureSession();
+      const authUser = localStorage.getItem("authUser");
+      const accessToken = localStorage.getItem("accessToken");
+
+      if (!valid || !authUser || !accessToken) {
+        clearAuthSession();
+        navigate("/login");
         return;
       }
-      setUser(parsedUser);
-      setToken(accessToken);
-    } catch (error) {
-      console.error("Failed to parse user data", error);
-      navigate("/login");
-    }
+
+      try {
+        const parsedUser = JSON.parse(authUser);
+        if (parsedUser.role === "admin") {
+          navigate("/admin", { replace: true });
+          return;
+        }
+        setUser(parsedUser);
+        setToken(accessToken);
+      } catch (error) {
+        console.error("Failed to parse user data", error);
+        clearAuthSession();
+        navigate("/login");
+      }
+    };
+
+    bootstrapSession();
   }, [navigate]);
 
   const fetchMySubmissions = async (currentToken) => {
-    const response = await fetch(`${API_BASE_URL}/questions/submissions/me`, {
-      headers: {
-        Authorization: `Bearer ${currentToken}`,
-      },
-    });
+    const response = await authFetch("/questions/submissions/me");
 
     const data = await response.json().catch(() => ({}));
+
     if (!response.ok) {
       throw new Error(data.message || "Could not fetch your submissions");
     }
@@ -76,13 +95,13 @@ export default function Dashboard() {
     if (!token) return;
 
     fetchMySubmissions(token).catch((error) => {
+      if (handleAuthFailure(error)) return;
       setSubmissionError(error.message || "Could not load your submissions");
     });
   }, [token]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("authUser");
+  const handleLogout = async () => {
+    await logoutSession();
     navigate("/login");
   };
 
@@ -110,16 +129,16 @@ export default function Dashboard() {
         seenInInterview: contributionForm.seenInInterview === "yes",
       };
 
-      const response = await fetch(`${API_BASE_URL}/questions/submissions`, {
+      const response = await authFetch("/questions/submissions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });
 
       const data = await response.json().catch(() => ({}));
+
       if (!response.ok) {
         throw new Error(data.message || "Could not submit question");
       }
@@ -133,6 +152,7 @@ export default function Dashboard() {
       });
       await fetchMySubmissions(token);
     } catch (error) {
+      if (handleAuthFailure(error)) return;
       setSubmissionError(error.message || "Could not submit question");
     } finally {
       setSubmissionLoading(false);
@@ -149,13 +169,58 @@ export default function Dashboard() {
       .slice(0, 2);
   };
 
-  const handleUpload = (e) => {
-    e.preventDefault();
+  const handleUploadClick = () => {
+    resumeInputRef.current?.click();
+  };
+
+  const handleUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!token) {
+      setResumeError("You must be logged in to upload resume files.");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.type !== "application/pdf") {
+      setResumeError("Please upload a PDF file only.");
+      event.target.value = "";
+      return;
+    }
+
+    setResumeError("");
+    setResumeSuccess("");
     setIsUploading(true);
-    setTimeout(() => {
+
+    try {
+      const formData = new FormData();
+      formData.append("resume", file);
+
+      const response = await authFetch("/questions/resume/skills", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.message || "Could not analyze resume");
+      }
+
+      setResumeFileName(data.fileName || file.name);
+      setExtractedSkills(data.skills || []);
+      setResumeSuccess(data.message || "Resume analyzed successfully.");
       setIsUploading(false);
       setResumeLoaded(true);
-    }, 1500);
+    } catch (error) {
+      if (handleAuthFailure(error)) return;
+      setIsUploading(false);
+      setResumeLoaded(false);
+      setResumeError(error.message || "Could not analyze resume");
+    } finally {
+      event.target.value = "";
+    }
   };
 
   const handleGenerate = () => {
@@ -193,9 +258,9 @@ export default function Dashboard() {
       </nav>
 
       {/* Main Workspace */}
-      <main className="max-w-7xl mx-auto p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 relative mt-4">
+      <main className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 relative mt-4">
         {location.state?.adminAccessDenied && (
-          <div className="lg:col-span-12 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 mb-6">
             {location.state.message || "You do not have access to the admin dashboard."}
           </div>
         )}
@@ -203,18 +268,29 @@ export default function Dashboard() {
         {/* Decorative background glow */}
         <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
 
-        {/* Left Side: Upload & Input Zone */}
-        <div className="lg:col-span-5 space-y-6 relative z-10">
+        <motion.div
+          className="space-y-6 relative z-10"
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+        >
           <Card className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-sm">
             <CardHeader>
-              <CardTitle>Resume Parsing</CardTitle>
-              <CardDescription>Upload your latest resume (PDF) for sentient analysis.</CardDescription>
+              <CardTitle className="text-center text-2xl">Add Resume</CardTitle>
+              <CardDescription className="text-center">Upload your latest resume (PDF) for analysis.</CardDescription>
             </CardHeader>
             <CardContent>
+              <input
+                ref={resumeInputRef}
+                type="file"
+                accept="application/pdf"
+                className="hidden"
+                onChange={handleUpload}
+              />
               {!resumeLoaded ? (
                 <div 
                   className="border-2 border-dashed border-border dark:border-slate-700 rounded-xl p-8 flex flex-col items-center justify-center gap-4 bg-muted/30 dark:bg-slate-700/30 hover:bg-muted/50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer"
-                  onClick={handleUpload}
+                    onClick={handleUploadClick}
                 >
                   {isUploading ? (
                     <Loader2 className="w-10 h-10 text-primary animate-spin" />
@@ -232,49 +308,105 @@ export default function Dashboard() {
                     <File className="w-6 h-6" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">john_doe_resume_2024.pdf</p>
+                    <p className="text-sm font-medium">{resumeFileName || "uploaded_resume.pdf"}</p>
                     <p className="text-xs text-green-600 font-medium">Analysis Complete ✓</p>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={() => setResumeLoaded(false)}>Remove</Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setResumeLoaded(false);
+                      setResumeFileName("");
+                      setExtractedSkills([]);
+                      setResumeSuccess("");
+                      setResumeError("");
+                    }}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              )}
+
+              {resumeError && <p className="mt-3 text-sm text-red-600">{resumeError}</p>}
+              {resumeSuccess && <p className="mt-3 text-sm text-green-700">{resumeSuccess}</p>}
+
+              {resumeLoaded && extractedSkills.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Extracted Skills
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {extractedSkills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
             </CardContent>
           </Card>
 
-          <Card className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-sm disabled:opacity-50">
-            <CardHeader>
-              <CardTitle>Target Archetype</CardTitle>
-              <CardDescription>Configure the AI persona for your mock questions.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Interview Type</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button variant="outline" className="bg-primary/5 border-primary text-primary">Technical</Button>
-                  <Button variant="outline">Behavioral</Button>
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={getFadeUpWithDelay(0.1)}
+          >
+            <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-md">
+              <CardHeader className="items-center text-center">
+                <CardTitle className="text-2xl">Predicted Questions</CardTitle>
+                <CardDescription>Focus zone for interview questions generated from your resume.</CardDescription>
+                <Button
+                  className="mt-2 h-11 rounded-lg"
+                  disabled={!resumeLoaded || isGenerating}
+                  onClick={handleGenerate}
+                >
+                  {isGenerating ? (
+                    <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Generating...</>
+                  ) : (
+                    <><PlayCircle className="w-5 h-5 mr-2" /> Generate Questions</>
+                  )}
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-5">
+                  <Card className="bg-white/80 dark:bg-slate-700/80 border-border/50 dark:border-slate-700/50">
+                    <CardHeader className="pb-4">
+                      <div className="flex gap-2 mb-3 flex-wrap">
+                        <span className="px-3 py-1 bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-400 text-xs font-bold rounded-full tracking-wider uppercase">System Design</span>
+                        <span className="px-3 py-1 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400 text-xs font-bold rounded-full tracking-wider uppercase">Deep Dive</span>
+                      </div>
+                      <CardTitle className="text-lg leading-relaxed">
+                        "I see you implemented a micro-frontend architecture at your last role. How did you handle shared state management and cross-app routing without causing significant latency?"
+                      </CardTitle>
+                    </CardHeader>
+                  </Card>
+
+                  <Card className="bg-white/80 dark:bg-slate-700/80 border-border/50 dark:border-slate-700/50">
+                    <CardHeader className="pb-4">
+                      <div className="flex gap-2 mb-3">
+                        <span className="px-3 py-1 bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-400 text-xs font-bold rounded-full tracking-wider uppercase">Behavioral</span>
+                      </div>
+                      <CardTitle className="text-lg leading-relaxed">
+                        "Tell me about a time when a critical bug slipped into production due to a flaw in your team's CI/CD pipeline. How did you diagnose the root cause, address it, and prevent recurrence?"
+                      </CardTitle>
+                    </CardHeader>
+                  </Card>
+
+                  <p className="text-sm text-center text-muted-foreground">
+                    Generate more questions based on your resume to keep practicing.
+                  </p>
                 </div>
-              </div>
-              <div className="space-y-2 pt-2">
-                <label className="text-sm font-medium">Target Role / Seniority</label>
-                <input type="text" placeholder="e.g. Senior Frontend Engineer" className="flex h-10 w-full rounded-md border border-input bg-secondary dark:bg-slate-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" />
-              </div>
-              <Button 
-                className="w-full mt-4 h-12 rounded-lg text-base shadow-lg shadow-primary/20" 
-                disabled={!resumeLoaded || isGenerating}
-                onClick={handleGenerate}
-              >
-                {isGenerating ? (
-                  <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Generating Insight...</>
-                ) : (
-                  <><PlayCircle className="w-5 h-5 mr-2" /> Generate Questions</>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           <Card className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-sm">
             <CardHeader>
-              <CardTitle>Contribute Interview Question</CardTitle>
+              <CardTitle className="text-center text-2xl">Contribute Question</CardTitle>
               <CardDescription>
                 Submit a question for admin review. Approved questions are added to the main dataset.
               </CardDescription>
@@ -377,62 +509,7 @@ export default function Dashboard() {
               )}
             </CardContent>
           </Card>
-        </div>
-
-        {/* Right Side: Generated Questions Feed */}
-        <div className="lg:col-span-7 relative z-10">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold tracking-tight">The Oracle's Insights</h2>
-            <div className="text-sm text-muted-foreground flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Intelligent Feed Active
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            {/* Example Question List (Static for UI Demo) */}
-            <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-md hover:-translate-y-1 transition-transform duration-300">
-              <CardHeader className="pb-4">
-                <div className="flex gap-2 mb-3">
-                  <span className="px-3 py-1 bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-400 text-xs font-bold rounded-full tracking-wider uppercase">System Design</span>
-                  <span className="px-3 py-1 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400 text-xs font-bold rounded-full tracking-wider uppercase">Deep Dive</span>
-                </div>
-                <CardTitle className="text-lg leading-relaxed">
-                  "I see you implemented a micro-frontend architecture at your last role. How did you handle shared state management and cross-app routing without causing significant latency?"
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="bg-muted/40 dark:bg-slate-700/40 p-4 rounded-lg border border-border/40 dark:border-slate-700/40">
-                  <p className="text-sm text-muted-foreground">
-                    <strong className="text-foreground">Why the Oracle asks:</strong> Highlighting your experience from "TechCorp" block in your resume. Evaluates your understanding of complex architecture integration strategies.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-md hover:-translate-y-1 transition-transform duration-300">
-              <CardHeader className="pb-4">
-                <div className="flex gap-2 mb-3">
-                  <span className="px-3 py-1 bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-400 text-xs font-bold rounded-full tracking-wider uppercase">Behavioral</span>
-                </div>
-                <CardTitle className="text-lg leading-relaxed">
-                  "Tell me about a time when a critical bug slipped into production due to a flaw in your team's CI/CD pipeline. How did you diagnose the root cause, address it, and prevent recurrence?"
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="bg-muted/40 dark:bg-slate-700/40 p-4 rounded-lg border border-border/40 dark:border-slate-700/40">
-                  <p className="text-sm text-muted-foreground">
-                    <strong className="text-foreground">Why the Oracle asks:</strong> Addresses the transition mentioned in your resume from manual QA to automated deployment. Evaluates problem-solving under pressure.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-            
-            {/* Empty State / Bottom Indicator */}
-            <div className="text-center py-8">
-              <p className="text-sm text-muted-foreground">Generate more questions based on your targeted role to expand the feed.</p>
-            </div>
-          </div>
-        </div>
+        </motion.div>
 
       </main>
     </div>

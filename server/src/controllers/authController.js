@@ -3,8 +3,50 @@ import { User } from "../models/User.js";
 import { sendPasswordResetEmail, sendVerificationEmail } from "../services/emailService.js";
 import { ApiError } from "../utils/apiError.js";
 import { generateToken, hashToken } from "../utils/crypto.js";
-import { signAccessToken } from "../utils/jwt.js";
+import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
 import { hashPassword, verifyPassword } from "../utils/password.js";
+
+const REFRESH_COOKIE_NAME = "refreshToken";
+const SESSION_EXPIRY_DAYS = new Set([1, 7, 30]);
+
+const getRefreshCookieOptions = (maxAgeMs) => ({
+  httpOnly: true,
+  secure: env.NODE_ENV === "production",
+  sameSite: "lax",
+  path: "/api/auth",
+  maxAge: maxAgeMs,
+});
+
+const buildSessionExpiry = (sessionDays) => ({
+  expiresIn: `${sessionDays}d`,
+  maxAgeMs: sessionDays * 24 * 60 * 60 * 1000,
+});
+
+const issueTokensForUser = async (user, sessionDays) => {
+  const safeSessionDays = SESSION_EXPIRY_DAYS.has(sessionDays) ? sessionDays : 7;
+  const { expiresIn, maxAgeMs } = buildSessionExpiry(safeSessionDays);
+
+  const accessToken = signAccessToken({
+    sub: String(user._id),
+    email: user.email,
+    role: user.role,
+  });
+
+  const refreshToken = signRefreshToken(
+    {
+      sub: String(user._id),
+      sessionDays: safeSessionDays,
+      role: user.role,
+    },
+    expiresIn,
+  );
+
+  user.refreshTokenHash = hashToken(refreshToken);
+  user.refreshTokenExpiresAt = new Date(Date.now() + maxAgeMs);
+  await user.save();
+
+  return { accessToken, refreshToken, maxAgeMs, sessionDays: safeSessionDays };
+};
 
 const buildSafeUser = (user) => ({
   id: user._id,
@@ -111,7 +153,7 @@ export const resendVerification = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, sessionDays: requestedSessionDays } = req.body;
   const user = await User.findOne({ email: email.toLowerCase() });
 
   if (!user) {
@@ -128,19 +170,85 @@ export const login = async (req, res) => {
   }
 
   user.lastLoginAt = new Date();
-  await user.save();
+  const { accessToken, refreshToken, maxAgeMs, sessionDays } = await issueTokensForUser(
+    user,
+    Number(requestedSessionDays),
+  );
 
-  const accessToken = signAccessToken({
-    sub: String(user._id),
-    email: user.email,
-    role: user.role,
-  });
+  res.cookie(REFRESH_COOKIE_NAME, refreshToken, getRefreshCookieOptions(maxAgeMs));
 
   return res.status(200).json({
     message: "Login successful",
     accessToken,
     user: buildSafeUser(user),
+    sessionDays,
   });
+};
+
+export const refresh = async (req, res) => {
+  const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME];
+  if (!refreshToken) {
+    throw new ApiError(401, "Refresh token missing");
+  }
+
+  let decoded;
+  try {
+    decoded = verifyRefreshToken(refreshToken);
+  } catch (_error) {
+    res.clearCookie(REFRESH_COOKIE_NAME, getRefreshCookieOptions(0));
+    throw new ApiError(401, "Invalid refresh token");
+  }
+
+  const user = await User.findById(decoded.sub);
+  const isStoredTokenValid =
+    !!user &&
+    !!user.refreshTokenHash &&
+    !!user.refreshTokenExpiresAt &&
+    user.refreshTokenExpiresAt > new Date() &&
+    user.refreshTokenHash === hashToken(refreshToken);
+
+  if (!isStoredTokenValid) {
+    if (user) {
+      user.refreshTokenHash = null;
+      user.refreshTokenExpiresAt = null;
+      await user.save();
+    }
+    res.clearCookie(REFRESH_COOKIE_NAME, getRefreshCookieOptions(0));
+    throw new ApiError(401, "Refresh token expired");
+  }
+
+  const { accessToken, refreshToken: rotatedRefreshToken, maxAgeMs, sessionDays } =
+    await issueTokensForUser(user, Number(decoded.sessionDays));
+
+  res.cookie(REFRESH_COOKIE_NAME, rotatedRefreshToken, getRefreshCookieOptions(maxAgeMs));
+
+  return res.status(200).json({
+    message: "Token refreshed",
+    accessToken,
+    user: buildSafeUser(user),
+    sessionDays,
+  });
+};
+
+export const logout = async (req, res) => {
+  const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME];
+
+  if (refreshToken) {
+    try {
+      const decoded = verifyRefreshToken(refreshToken);
+      const user = await User.findById(decoded.sub);
+      if (user) {
+        user.refreshTokenHash = null;
+        user.refreshTokenExpiresAt = null;
+        await user.save();
+      }
+    } catch (_error) {
+      // Best effort logout: clear cookie even if token is invalid.
+    }
+  }
+
+  res.clearCookie(REFRESH_COOKIE_NAME, getRefreshCookieOptions(0));
+  return res.status(200).json({ message: "Logged out" });
 };
 
 export const forgotPassword = async (req, res) => {
