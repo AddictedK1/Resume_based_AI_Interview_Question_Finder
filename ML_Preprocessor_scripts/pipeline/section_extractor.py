@@ -1,10 +1,7 @@
-import re
 import spacy
 
 nlp = spacy.load("en_core_web_sm")
 
-# Tech/domain keywords to watch for in project and experience text
-# Add more as you see them in your test resumes
 DOMAIN_KEYWORDS = [
     "api", "rest", "graphql", "database", "backend", "frontend", "full stack",
     "authentication", "deployment", "real-time", "machine learning", "model",
@@ -15,107 +12,61 @@ DOMAIN_KEYWORDS = [
     "crud", "mvc", "scalability", "load balancing", "data analysis", "dashboard",
     "visualization", "prediction", "training", "inference", "embedding",
     "search engine", "notification", "file upload", "image processing",
+    "real time", "live", "stream", "queue", "event driven", "serverless",
 ]
 
-def extract_from_projects(projects_text: str) -> list[str]:
-    """
-    From projects section, extract:
-    - Tech tools/frameworks mentioned
-    - Domain concepts (what the project does)
-    - Noun phrases that describe the work
-    """
-    if not projects_text:
-        return []
+EDUCATION_SIGNALS = [
+    "computer science", "information technology", "software engineering",
+    "data science", "artificial intelligence", "electronics", "mathematics",
+    "data structures", "algorithms", "operating systems", "computer networks",
+    "database management", "machine learning", "web development",
+    "software development", "information systems",
+]
 
-    keywords = []
-    text_lower = projects_text.lower()
 
-    # Extract known domain keywords
-    for kw in DOMAIN_KEYWORDS:
-        if kw in text_lower:
-            keywords.append(kw)
-
-    # Use spaCy to extract noun chunks (e.g. "sentiment analysis model", "login system")
-    doc = nlp(projects_text)
+def _extract_noun_phrases(text: str, min_words: int = 2, max_words: int = 4) -> list[str]:
+    doc = nlp(text)
+    phrases = []
     for chunk in doc.noun_chunks:
         phrase = chunk.text.strip().lower()
-        # Keep 2-4 word meaningful phrases, skip single generic words
-        words = phrase.split()
-        if 2 <= len(words) <= 4:
-            keywords.append(phrase)
-
-    return list(set(keywords))
+        word_count = len(phrase.split())
+        if min_words <= word_count <= max_words:
+            phrases.append(phrase)
+    return phrases
 
 
-def extract_from_experience(experience_text: str) -> list[str]:
-    """
-    From experience/internship section, extract:
-    - Technologies and tools used
-    - Domain context (what industry/type of work)
-    - Action-oriented concepts
-    """
-    if not experience_text:
+def extract_from_projects(text: str) -> list[str]:
+    if not text:
         return []
-
-    keywords = []
-    text_lower = experience_text.lower()
-
-    # Extract known domain keywords
-    for kw in DOMAIN_KEYWORDS:
-        if kw in text_lower:
-            keywords.append(kw)
-
-    # Extract noun chunks same as projects
-    doc = nlp(experience_text)
-    for chunk in doc.noun_chunks:
-        phrase = chunk.text.strip().lower()
-        words = phrase.split()
-        if 2 <= len(words) <= 4:
-            keywords.append(phrase)
-
+    text_lower = text.lower()
+    keywords = [kw for kw in DOMAIN_KEYWORDS if kw in text_lower]
+    keywords += _extract_noun_phrases(text)
     return list(set(keywords))
 
 
-def extract_from_education(education_text: str) -> list[str]:
-    """
-    From education section, extract:
-    - Field of study (gives context about background)
-    - Relevant coursework if mentioned
-    """
-    if not education_text:
+def extract_from_experience(text: str) -> list[str]:
+    if not text:
         return []
-
-    keywords = []
-    text_lower = education_text.lower()
-
-    EDUCATION_SIGNALS = [
-        "computer science", "information technology", "software engineering",
-        "data science", "artificial intelligence", "electronics", "mathematics",
-        "data structures", "algorithms", "operating systems", "computer networks",
-        "database", "machine learning", "web development", "software development",
-    ]
-
-    for signal in EDUCATION_SIGNALS:
-        if signal in text_lower:
-            keywords.append(signal)
-
+    text_lower = text.lower()
+    keywords = [kw for kw in DOMAIN_KEYWORDS if kw in text_lower]
+    keywords += _extract_noun_phrases(text)
     return list(set(keywords))
 
 
-def extract_from_summary(summary_text: str) -> list[str]:
-    """
-    From summary/objective, extract self-described focus areas.
-    """
-    if not summary_text:
+def extract_from_education(text: str) -> list[str]:
+    if not text:
         return []
+    text_lower = text.lower()
+    return [sig for sig in EDUCATION_SIGNALS if sig in text_lower]
 
-    doc = nlp(summary_text)
-    keywords = []
 
-    for chunk in doc.noun_chunks:
-        phrase = chunk.text.strip().lower()
-        words = phrase.split()
-        if 1 <= len(words) <= 3:
-            keywords.append(phrase)
+def extract_from_summary(text: str) -> list[str]:
+    if not text:
+        return []
+    return _extract_noun_phrases(text, min_words=1, max_words=3)
 
-    return list(set(keywords))
+
+def extract_from_achievements(text: str) -> list[str]:
+    if not text:
+        return []
+    return _extract_noun_phrases(text, min_words=1, max_words=3)
