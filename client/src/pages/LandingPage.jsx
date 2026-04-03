@@ -552,7 +552,7 @@ export default function LandingPage() {
       {/* ═══════════════════ HOW IT WORKS ═══════════════════ */}
       <motion.section
         id="how-it-works"
-        className="py-20 px-6 lg:px-8 bg-muted/30 dark:bg-slate-900/50"
+        className="py-20 px-6 lg:px-8 bg-muted/30 dark:bg-slate-950"
         initial="hidden"
         whileInView="visible"
         viewport={viewportSettings}
@@ -668,7 +668,7 @@ export default function LandingPage() {
       {/* ═══════════════════ PRICING ═══════════════════ */}
       <motion.section
         id="pricing"
-        className="py-20 px-6 lg:px-8 bg-muted/30 dark:bg-slate-900/50"
+        className="py-20 px-6 lg:px-8 bg-muted/30 dark:bg-slate-950"
         initial="hidden"
         whileInView="visible"
         viewport={viewportSettings}
@@ -787,7 +787,7 @@ export default function LandingPage() {
       </motion.section>
 
       {/* ═══════════════════ FOOTER ═══════════════════ */}
-      <footer className="border-t border-border/40 py-16 md:py-20 px-6 md:px-8 bg-[#fdfcfb]">
+      <footer className="border-t border-border/40 dark:border-slate-700/40 py-16 md:py-20 px-6 md:px-8 bg-[#fdfcfb] dark:bg-slate-950">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12 md:gap-0">
           {/* Brand */}
           <div className="space-y-5 max-w-xs">
@@ -837,7 +837,7 @@ export default function LandingPage() {
         </div>
 
         {/* Bottom bar */}
-        <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-border/40 dark:border-slate-700/40 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground/50">
             © 2026 Interview Buddy. All rights reserved.
           </p>
