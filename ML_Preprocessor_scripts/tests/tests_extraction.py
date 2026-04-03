@@ -6,11 +6,18 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 from pipeline.pdf_parser import extract_clean_text
 from pipeline.profile_builder import build_profile
+from pipeline.resume_loader import get_resume_file
 from search.searcher import search
 from search.postprocessor import deduplicate, group_by_topic, sort_by_difficulty
 
 # ── Config ───────────────────────────────────────────────────────
-RESUME_PATH = Path(__file__).parent / "kp_resume.pdf"
+# Try to load resume from user_resumes folder
+try:
+    RESUME_PATH = get_resume_file()
+except FileNotFoundError as e:
+    print(f"\n❌ Error: {e}")
+    print("\nFallback: Using test resume from tests folder")
+    RESUME_PATH = str(Path(__file__).parent / "kp_resume.pdf")
 
 # ── Step 1: Extract and build profile ────────────────────────────
 print("=" * 60)
@@ -35,7 +42,7 @@ print("\n" + "=" * 60)
 print("STEP 2 — Searching questions via FAISS")
 print("=" * 60)
 
-raw_results = search(profile["profile_string"], top_k=30, min_score=0.25)
+raw_results = search(profile["profile_string"], top_k=30, min_score=0.15)
 print(f"\nTotal matches above threshold: {len(raw_results)}")
 
 deduped  = deduplicate(raw_results, max_per_topic=4)

@@ -1,0 +1,2706 @@
+[
+  {
+    "sr no":1,
+    "topic":"Basics of OS",
+    "question":"Explain the main purpose of an operating system?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":2,
+    "topic":"Basics of OS",
+    "question":"What problem we face in computer system without OS?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":3,
+    "topic":"Basics of OS",
+    "question":"What is the best page size when designing an operating system?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":4,
+    "topic":"Basics of OS",
+    "question":"What is a bootstrap program in the OS?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":5,
+    "topic":"Basics of OS",
+    "question":"What is the difference between the Operating system and kernel?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":6,
+    "topic":"CPU Scheduling",
+    "question":"What are the different scheduling algorithms",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":7,
+    "topic":"CPU Scheduling",
+    "question":"What is the RR scheduling algorithm?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":8,
+    "topic":"CPU Scheduling",
+    "question":"What is Banker's algorithm?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":9,
+    "topic":"CPU Scheduling",
+    "question":"What is the difference between preemptive and non-preemptive scheduling?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":10,
+    "topic":"CPU Scheduling",
+    "question":"What are the goals of CPU scheduling?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":11,
+    "topic":"CPU Scheduling",
+    "question":"What is a Banker's algorithm?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":12,
+    "topic":"CPU Scheduling",
+    "question":"Write an advantage of dynamic allocation algorithms?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":13,
+    "topic":"Deadlocks",
+    "question":"What is a deadlock?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":14,
+    "topic":"Deadlocks",
+    "question":"Can deadlock be completely avoided?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":15,
+    "topic":"File System",
+    "question":"Write down the basic concept of the file system?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":16,
+    "topic":"File System",
+    "question":"What is file allocation methods?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":17,
+    "topic":"General OS Concepts",
+    "question":"What is Thrashing?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":18,
+    "topic":"General OS Concepts",
+    "question":"What is Buffer?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":19,
+    "topic":"General OS Concepts",
+    "question":"What is a kernel?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":20,
+    "topic":"General OS Concepts",
+    "question":"Describe the objective of multi-programming?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":21,
+    "topic":"General OS Concepts",
+    "question":"What is the time-sharing system?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":22,
+    "topic":"General OS Concepts",
+    "question":"Briefly explain FCFS?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":23,
+    "topic":"General OS Concepts",
+    "question":"Enumerate the different RAID levels?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":24,
+    "topic":"General OS Concepts",
+    "question":"What are overlays?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":25,
+    "topic":"General OS Concepts",
+    "question":"What is the Direct Access Method?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":26,
+    "topic":"General OS Concepts",
+    "question":"When does thrashing occur?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":27,
+    "topic":"General OS Concepts",
+    "question":"What is multitasking?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":28,
+    "topic":"General OS Concepts",
+    "question":"What is caching?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":29,
+    "topic":"General OS Concepts",
+    "question":"What is spooling?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":30,
+    "topic":"General OS Concepts",
+    "question":"What are interrupts?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":31,
+    "topic":"General OS Concepts",
+    "question":"What is GUI?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":32,
+    "topic":"General OS Concepts",
+    "question":"What is preemptive multitasking?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":33,
+    "topic":"General OS Concepts",
+    "question":"What is a pipe and when is it used?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":34,
+    "topic":"General OS Concepts",
+    "question":"What is IPC?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":35,
+    "topic":"General OS Concepts",
+    "question":"What are the different IPC mechanisms?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":36,
+    "topic":"General OS Concepts",
+    "question":"Write about monolithic kernel?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":37,
+    "topic":"General OS Concepts",
+    "question":"What is Context Switching?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":38,
+    "topic":"General OS Concepts",
+    "question":"What is PCB?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":39,
+    "topic":"General OS Concepts",
+    "question":"When is a system in a safe state?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":40,
+    "topic":"General OS Concepts",
+    "question":"What is Cycle Stealing?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":41,
+    "topic":"General OS Concepts",
+    "question":"What is a dispatcher?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":42,
+    "topic":"General OS Concepts",
+    "question":"Define the term dispatch latency?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":43,
+    "topic":"General OS Concepts",
+    "question":"What are the drawbacks of semaphores?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":44,
+    "topic":"General OS Concepts",
+    "question":"What is concurrency?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":45,
+    "topic":"General OS Concepts",
+    "question":"Write a drawback of concurrency?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":46,
+    "topic":"General OS Concepts",
+    "question":"Write a difference between physical address and logical address?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":47,
+    "topic":"General OS Concepts",
+    "question":"Explain address binding?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":48,
+    "topic":"General OS Concepts",
+    "question":"Write about the advantages and disadvantages of a hashed-page table?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":49,
+    "topic":"General OS Concepts",
+    "question":"What is seek time?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":50,
+    "topic":"General OS Concepts",
+    "question":"What are real-time systems?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":51,
+    "topic":"General OS Concepts",
+    "question":"What happens during interrupt handling?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":52,
+    "topic":"General OS Concepts",
+    "question":"What happens during context switching?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":53,
+    "topic":"I\/O & Disk Management",
+    "question":"What is fragmentation?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":54,
+    "topic":"I\/O & Disk Management",
+    "question":"What are starvation and aging in OS?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":55,
+    "topic":"I\/O & Disk Management",
+    "question":"Explain the resource allocation graph?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":56,
+    "topic":"I\/O & Disk Management",
+    "question":"Explain the resource allocation graph?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":57,
+    "topic":"I\/O & Disk Management",
+    "question":"Write a difference between internal fragmentation and external fragmentation?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":58,
+    "topic":"I\/O & Disk Management",
+    "question":"What is rotational latency?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":59,
+    "topic":"Memory Management",
+    "question":"What is virtual memory?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":60,
+    "topic":"Memory Management",
+    "question":"What is demand paging and how it works?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":61,
+    "topic":"Memory Management",
+    "question":"How does dynamic loading aid in better memory space utilization?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":62,
+    "topic":"Memory Management",
+    "question":"What is the basic function of paging?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":63,
+    "topic":"Memory Management",
+    "question":"How does swapping result in better memory management?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":64,
+    "topic":"Memory Management",
+    "question":"What is the goal and functionality of memory management?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":65,
+    "topic":"Memory Management",
+    "question":"Write a difference between paging and segmentation?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":66,
+    "topic":"Memory Management",
+    "question":"Write down the advantages of virtual memory?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":67,
+    "topic":"Memory Management",
+    "question":"What happens when system runs out of memory?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":68,
+    "topic":"Process & Thread Management",
+    "question":"What is a process and process table?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":69,
+    "topic":"Process & Thread Management",
+    "question":"What are the different states of the process?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":70,
+    "topic":"Process & Thread Management",
+    "question":"What is a Thread?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":71,
+    "topic":"Process & Thread Management",
+    "question":"What are the differences between process and thread?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":72,
+    "topic":"Process & Thread Management",
+    "question":"What are the benefits of multithreaded programming?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":73,
+    "topic":"Process & Thread Management",
+    "question":"Give some benefits of multithreaded programming?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":74,
+    "topic":"Process & Thread Management",
+    "question":"What is the zombie process?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":75,
+    "topic":"Process & Thread Management",
+    "question":"What is the difference between process and thread",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":76,
+    "topic":"Process & Thread Management",
+    "question":"Write a difference between program and process?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":77,
+    "topic":"Process & Thread Management",
+    "question":"Write down the advantages of multithreading?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":78,
+    "topic":"Process & Thread Management",
+    "question":"Difference between Multithreading and Multitasking?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":79,
+    "topic":"Process & Thread Management",
+    "question":"What are the advantages of a multiprocessor system?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":80,
+    "topic":"Process & Thread Management",
+    "question":"What happens during process creation?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":1,
+    "topic":"HTML",
+    "question":"What is the difference between HTML elements and tags?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":2,
+    "topic":"HTML",
+    "question":"Define the HTML5 Semantic Elements and why they are important for SEO.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":3,
+    "topic":"CSS",
+    "question":"Explain the CSS Box Model and how box-sizing: border-box changes it.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":4,
+    "topic":"DOM",
+    "question":"What is the DOM (Document Object Model) and how does the browser render it?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":5,
+    "topic":"CSS",
+    "question":"How do CSS Selectors work in terms of specificity and priority?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":6,
+    "topic":"Web Development",
+    "question":"Explain the difference between \"Prototypal Inheritance\" and \"Classical Inheritance.\"",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":7,
+    "topic":"Web Development",
+    "question":"What is the difference between display: none and visibility: hidden?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":8,
+    "topic":"Web Development",
+    "question":"What is a \"Single Page Application\" (SPA) vs. a \"Multi-Page Application\" (MPA)?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":9,
+    "topic":"Web Development",
+    "question":"Define \"Rate Limiting\" and \"Throttling\" from a security perspective.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":10,
+    "topic":"Web Development",
+    "question":"What is \"Prefetching,\" \"Preloading,\" and \"Preconnecting\"?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":11,
+    "topic":"JavaScript",
+    "question":"Define \"Hoisting\" in JavaScript.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":12,
+    "topic":"Web Development",
+    "question":"Define \"LocalStorage,\" \"SessionStorage,\" and \"Cookies.\" Compare their storage limits.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":13,
+    "topic":"Web Development",
+    "question":"What is the difference between var, let, and const in terms of scope?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":14,
+    "topic":"JavaScript",
+    "question":"What is the difference between \"Strict Mode\" and \"Sloppy Mode\" in JavaScript?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":15,
+    "topic":"JavaScript",
+    "question":"Explain the \"Event Loop\" in JavaScript and how it handles asynchronous tasks.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":16,
+    "topic":"Web Development",
+    "question":"What is AJAX and how does the fetch API improve upon XMLHttpRequest?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":17,
+    "topic":"JavaScript",
+    "question":"What are Closures in JavaScript? Provide a practical use case.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":18,
+    "topic":"Web Development",
+    "question":"Explain the concept of \"Promises\" and how they solve \"Callback Hell.\"",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":19,
+    "topic":"Web Development",
+    "question":"Explain the difference between == and === operators.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":20,
+    "topic":"Web Development",
+    "question":"What is \"Event Bubbling\" and \"Event Capturing\"?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":21,
+    "topic":"Web Development",
+    "question":"Define \"Tree Shaking\" and explain how it reduces the final bundle size.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":22,
+    "topic":"Web Development",
+    "question":"What is \"Code Splitting\" and how is it implemented using Dynamic Imports?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":23,
+    "topic":"Web Development",
+    "question":"What is the difference between \"Authentication\" and \"Authorization\" in a web app?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":24,
+    "topic":"Web Development",
+    "question":"What is a \"Database Index\" and why shouldn't you index every column in a table?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":25,
+    "topic":"Web Development",
+    "question":"Explain the \"Client-Server Model\" and the role of \"Middleware\" in the request-response cycle.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":26,
+    "topic":"Web Development",
+    "question":"What is \"Session-based Authentication\" vs. \"Token-based Authentication\" (JWT)?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":27,
+    "topic":"Web Development",
+    "question":"What is \"Database Normalization\" and why is 3NF (Third Normal Form) usually the standard?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":28,
+    "topic":"Web Development",
+    "question":"Define \"Idempotency\" and identify which HTTP methods (GET, POST, PUT, DELETE) are idempotent.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":29,
+    "topic":"Web Development",
+    "question":"Define \"Horizontal Scaling\" vs. \"Vertical Scaling\" for a web server.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":30,
+    "topic":"Web Development",
+    "question":"Explain the concept of \"Object-Relational Mapping\" (ORM). What are its pros and cons?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":31,
+    "topic":"Web Development",
+    "question":"What is \"Rate Limiting\" and how does it protect an API from abuse?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":32,
+    "topic":"Web Development",
+    "question":"Explain the \"N+1 Query Problem\" and how \"Eager Loading\" solves it.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":33,
+    "topic":"Web Development",
+    "question":"How does \"Debouncing\" differ from \"Throttling\" in event handling?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":34,
+    "topic":"Web Development",
+    "question":"Explain the \"Same-Origin Policy\" and how CORS (Cross-Origin Resource Sharing) works.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":35,
+    "topic":"DOM",
+    "question":"What is the \"Virtual DOM\" and how does it improve performance in libraries like React?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":36,
+    "topic":"Web Development",
+    "question":"What is \"State Management\" and why is it needed in large-scale applications?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":37,
+    "topic":"Web Development",
+    "question":"Explain the \"Model-View-Controller\" (MVC) architecture in web development.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":38,
+    "topic":"Web Development",
+    "question":"Explain the concept of \"Dependency Injection\" in frameworks like Angular.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":39,
+    "topic":"Web Development",
+    "question":"What is \"Server-Side Rendering\" (SSR) vs. \"Client-Side Rendering\" (CSR)?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":40,
+    "topic":"DOM",
+    "question":"What are \"Web Components\" and the \"Shadow DOM\"?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":41,
+    "topic":"Web Development",
+    "question":"Define \"Progressive Web Apps\" (PWAs) and their core features like Service Workers.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":42,
+    "topic":"Web Development",
+    "question":"Define \"Hydration\" in the context of modern web frameworks.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":43,
+    "topic":"JavaScript",
+    "question":"What is \"Tree Shaking\" in JavaScript bundlers?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":44,
+    "topic":"Web Development",
+    "question":"Explain the \"Micro-Frontend\" architecture.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":45,
+    "topic":"Web Development",
+    "question":"What is the difference between REST and SOAP web services?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":46,
+    "topic":"Web Development",
+    "question":"Define the standard HTTP Status Codes (200, 301, 400, 401, 404, 500).",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":47,
+    "topic":"Web Development",
+    "question":"What is the difference between \"Authentication\" and \"Authorization\"?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":48,
+    "topic":"Web Development",
+    "question":"What is GraphQL and how does it solve \"Over-fetching\" and \"Under-fetching\"?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":49,
+    "topic":"Web Development",
+    "question":"Explain \"Cross-Site Request Forgery\" (CSRF) and the role of Anti-CSRF tokens.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":50,
+    "topic":"JavaScript",
+    "question":"Explain \"JSON Web Tokens\" (JWT) and how they are used for authentication.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":51,
+    "topic":"Web Development",
+    "question":"Define \"Content Security Policy\" (CSP).",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":52,
+    "topic":"Web Development",
+    "question":"What is \"Cross-Site Scripting\" (XSS) and how can it be prevented?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":53,
+    "topic":"Web Development",
+    "question":"How does \"HTTPS\" differ from \"HTTP\" at the protocol level?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":54,
+    "topic":"Web Development",
+    "question":"What is a \"Content Delivery Network\" (CDN) and how does it reduce latency?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":55,
+    "topic":"Web Development",
+    "question":"What is \"WebAssembly\" (Wasm) and when should it be used?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":56,
+    "topic":"Web Development",
+    "question":"Explain \"WebSockets\" and how they differ from traditional HTTP polling.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":57,
+    "topic":"Web Development",
+    "question":"Explain the concept of \"Containerization\" (Docker) in web deployment.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":58,
+    "topic":"Web Development",
+    "question":"What is \"Lazy Loading\" and how does it improve initial page load time?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":59,
+    "topic":"Web Development",
+    "question":"Define \"Responsive Web Design\" vs. \"Adaptive Web Design.\"",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":60,
+    "topic":"Web Development",
+    "question":"Define \"Critical Rendering Path.\"",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":61,
+    "topic":"Web Development",
+    "question":"What are \"Web Vitals\" (LCP, FID, CLS) and why does Google use them for ranking?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":62,
+    "topic":"Web Development",
+    "question":"What is \"Database Normalization\" and what are the 1NF, 2NF, and 3NF rules?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":63,
+    "topic":"Web Development",
+    "question":"Explain \"HTTP\/2\" features like Multiplexing and Server Push.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":64,
+    "topic":"Web Development",
+    "question":"Define \"ACID\" properties in the context of database transactions.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":65,
+    "topic":"Web Development",
+    "question":"Explain the difference between SQL and NoSQL databases. When would you choose one over the other?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":66,
+    "topic":"Web Development",
+    "question":"What is \"Serverless Architecture\" (FaaS)?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":67,
+    "topic":"Web Development",
+    "question":"What is an \"API Gateway\" and what are its primary responsibilities?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":68,
+    "topic":"Web Development",
+    "question":"What are \"BASE\" properties in distributed systems?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":69,
+    "topic":"Web Development",
+    "question":"What is a \"N+1 Query Problem\" in ORM frameworks and how do you solve it?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":70,
+    "topic":"Web Development",
+    "question":"Explain \"Database Indexing\" and how it improves query performance.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":71,
+    "topic":"Web Development",
+    "question":"What is the \"SameSite\" attribute in cookies and how does it prevent CSRF?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":72,
+    "topic":"Web Development",
+    "question":"What is \"Middleware\" in the context of a backend framework like Express or Django?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":73,
+    "topic":"Web Development",
+    "question":"Explain the difference between \"Vertical Scaling\" and \"Horizontal Scaling.\"",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":74,
+    "topic":"Web Development",
+    "question":"Define \"Sharding\" vs. \"Replication\" in database scaling.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":75,
+    "topic":"Web Development",
+    "question":"What is \"Connection Pooling\" and why is it important for high-traffic applications?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":76,
+    "topic":"Web Development",
+    "question":"What is \"SQL Injection\" and how do \"Prepared Statements\" prevent it?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":77,
+    "topic":"Web Development",
+    "question":"Define \"Insecure Direct Object References\" (IDOR).",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":78,
+    "topic":"Web Development",
+    "question":"Explain \"HSTS\" (HTTP Strict Transport Security).",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":79,
+    "topic":"Web Development",
+    "question":"What is the difference between \"Symmetric\" and \"Asymmetric\" encryption?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":80,
+    "topic":"Web Development",
+    "question":"Explain \"Gzip\" and \"Brotli\" compression for web assets.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":81,
+    "topic":"Web Development",
+    "question":"Explain the \"Principle of Least Privilege\" in web server configuration.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":82,
+    "topic":"Web Development",
+    "question":"What is \"Minification\" and how does it differ from \"Obfuscation\"?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":83,
+    "topic":"Web Development",
+    "question":"Explain \"Salting\" and \"Peppering\" in the context of password hashing.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":84,
+    "topic":"Web Development",
+    "question":"What is \"Clickjacking\" and how does the X-Frame-Options header mitigate it?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":85,
+    "topic":"Web Development",
+    "question":"What is \"OAuth 2.0\" and how does it differ from \"OpenID Connect\"?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":86,
+    "topic":"Web Development",
+    "question":"Explain the \"Flux\" architecture and how it differs from traditional MVC.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":87,
+    "topic":"Web Development",
+    "question":"What is \"Controlled\" vs. \"Uncontrolled\" components in form handling?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":88,
+    "topic":"Web Development",
+    "question":"How does \"Content Security Policy\" (CSP) help in mitigating XSS attacks?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":89,
+    "topic":"Web Development",
+    "question":"Define \"Higher-Order Components\" (HOC) and their use cases.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":90,
+    "topic":"Web Development",
+    "question":"What is \"Data Binding\" and how does \"One-way\" differ from \"Two-way\" binding?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":91,
+    "topic":"Web Development",
+    "question":"What is the difference between \"State\" and \"Props\" in component-based frameworks?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":92,
+    "topic":"Web Development",
+    "question":"Explain the \"Single Responsibility Principle\" in the context of Web Components.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":93,
+    "topic":"Web Development",
+    "question":"What is the difference between \"Persistent Connections\" (HTTP Keep-Alive) and \"WebSockets\"?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":94,
+    "topic":"Web Development",
+    "question":"Define \"First Contentful Paint\" (FCP) vs. \"Largest Contentful Paint\" (LCP).",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":95,
+    "topic":"Web Development",
+    "question":"How does \"Image Optimization\" (WebP, Avif, Responsive Images) affect Core Web Vitals?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":96,
+    "topic":"Web Development",
+    "question":"Explain \"Browser Caching\" and the use of the Cache-Control header.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":97,
+    "topic":"Web Development",
+    "question":"What is the \"Main Thread\" in a browser and how do \"Web Workers\" help offload it?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":1,
+    "topic":"Software Basics",
+    "question":"What are the Characteristics of Software?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":2,
+    "topic":"Software Basics",
+    "question":"What are the Various Categories of Software?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":3,
+    "topic":"SDLC",
+    "question":"Explain SDLC and its Phases?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":4,
+    "topic":"SDLC",
+    "question":"What are different SDLC Models Available?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":5,
+    "topic":"SDLC Models",
+    "question":"What is the Waterfall Method and What are its Use Cases?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":6,
+    "topic":"Software Testing",
+    "question":"What is Black Box Testing?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":7,
+    "topic":"Software Testing",
+    "question":"What is White Box Testing?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":8,
+    "topic":"Software Testing",
+    "question":"Distinguish between Alpha and Beta Testing?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":9,
+    "topic":"General SE",
+    "question":"What is Debugging?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":10,
+    "topic":"General SE",
+    "question":"What is a Feasibility Study?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":11,
+    "topic":"General SE",
+    "question":"What is a Use Case Diagram?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":12,
+    "topic":"General SE",
+    "question":"What is the difference between Verification and Validation?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":13,
+    "topic":"General SE",
+    "question":"What is a Baseline?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":14,
+    "topic":"General SE",
+    "question":"What is Cohesion and Coupling?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":15,
+    "topic":"Agile",
+    "question":"What is the Agile software development model?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":16,
+    "topic":"General SE",
+    "question":"What is the Difference Between Quality Assurance and Quality Control?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":17,
+    "topic":"General SE",
+    "question":"What is the Spiral Model, and its Disadvantages?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":18,
+    "topic":"General SE",
+    "question":"What is the RAD Model, and its limitations?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":19,
+    "topic":"Software Testing",
+    "question":"What is Regression Testing?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":20,
+    "topic":"General SE",
+    "question":"What are CASE Tools?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":21,
+    "topic":"General SE",
+    "question":"What is Physical and Logical DFD",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":22,
+    "topic":"General SE",
+    "question":"What is Software Re-engineering?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":23,
+    "topic":"General SE",
+    "question":"What is Reverse Engineering?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":24,
+    "topic":"General SE",
+    "question":"What are Software Project Estimation Techniques Available?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":25,
+    "topic":"General SE",
+    "question":"What is SRS?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":26,
+    "topic":"General SE",
+    "question":"What is level-0 DFD?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":27,
+    "topic":"General SE",
+    "question":"What Activities Come Under the Umbrella Activities?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":28,
+    "topic":"Software Testing",
+    "question":"Which of the Testing is Used for Fault Simulation?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":29,
+    "topic":"General SE",
+    "question":"Which Model is Used to Check Software Reliability?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":30,
+    "topic":"General SE",
+    "question":"What is the Difference between Risk and Uncertainty?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":31,
+    "topic":"General SE",
+    "question":"What are the elements to be considered in the System Model Construction?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":32,
+    "topic":"General SE",
+    "question":"What is data dictionary?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":33,
+    "topic":"Software Design",
+    "question":"What is ER diagram in system design?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":34,
+    "topic":"Software Design",
+    "question":"What is normalization in database design?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":35,
+    "topic":"Requirements Engineering",
+    "question":"What is requirement validation process?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":36,
+    "topic":"General SE",
+    "question":"What is class diagram?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":37,
+    "topic":"General SE",
+    "question":"What is sequence diagram?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":38,
+    "topic":"General SE",
+    "question":"What is state diagram?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":39,
+    "topic":"General SE",
+    "question":"What is component diagram?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":40,
+    "topic":"General SE",
+    "question":"What is deployment diagram?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":41,
+    "topic":"General SE",
+    "question":"How do you manage high traffic?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":42,
+    "topic":"General SE",
+    "question":"What if database crashes?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":43,
+    "topic":"General SE",
+    "question":"How do you ensure data consistency?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":44,
+    "topic":"General SE",
+    "question":"How to improve system reliability?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":45,
+    "topic":"General SE",
+    "question":"What if software is too slow?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":null
+  },
+  {
+    "sr no":1,
+    "topic":"Array",
+    "question":"What is the time complexity for accessing an element in an array",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":2,
+    "topic":"Array",
+    "question":"What is the difference between fixed sized and dynamic sized arrays?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":3,
+    "topic":"Array",
+    "question":"Why is it important that arrays use contiguous memory locations, and what problems can arise if they did not?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":4,
+    "topic":"Array",
+    "question":" What is the time complexity to search in an unsorted and sorted array ?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":5,
+    "topic":"Array",
+    "question":"What are the time complexities to insert and delete at the beginning and end if we have extra space in the array for the new element?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":6,
+    "topic":"Array",
+    "question":"What is an array index out of bounds exception?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":7,
+    "topic":"Array",
+    "question":"Discuss the advantages and disadvantages of using arrays",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":8,
+    "topic":"Array",
+    "question":"How do array differ from linked lists?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":9,
+    "topic":"Array",
+    "question":"Explain the concept of a sparse array",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":10,
+    "topic":"Array",
+    "question":"Explain the concept of a multi-dimensional array",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":11,
+    "topic":"Array",
+    "question":"How do you find missing number from 1 to n",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":12,
+    "topic":"Array",
+    "question":"How would you find the maximum subarray sum?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":13,
+    "topic":"Array",
+    "question":"When should you NOT use arrays",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":14,
+    "topic":"Matrix",
+    "question":"How would you check if a given matrix is symmetric?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":15,
+    "topic":"Matrix",
+    "question":"How would you find the kth smallest element in a 2D matrix sorted both row-wise and column-wise?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":16,
+    "topic":"Matrix",
+    "question":"What are the applications of sparse matrices?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":17,
+    "topic":"Matrix",
+    "question":"How can you flatten a 2D matrix into a 1D array without using extra space?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":18,
+    "topic":"Matrix",
+    "question":"What is the time complexity to access an element in matrix?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":19,
+    "topic":"Matrix",
+    "question":"Why is naive matrix multiplication inefficient?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":20,
+    "topic":"Matrix",
+    "question":"What is difference between dense and sparse matrix?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":21,
+    "topic":"Linked list",
+    "question":"What are the advantages of a Linked List?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":22,
+    "topic":"Linked list",
+    "question":"What is time complexity of Linked List operations like insertion and deletion?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":23,
+    "topic":"Linked list",
+    "question":"Why is merge sort better than quicksort in a singly linked list?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Easy"
+  },
+  {
+    "sr no":24,
+    "topic":"Linked list",
+    "question":"What are the applications of a Doubly Linked List?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":25,
+    "topic":"Linked list",
+    "question":"Why is random access not possible in linked list?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":26,
+    "topic":"Linked list",
+    "question":"How do you detect a cycle?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":27,
+    "topic":"Linked list",
+    "question":"Why do linked lists require extra memory compared to arrays?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":28,
+    "topic":"Linked list",
+    "question":"Why does quicksort perform poorly on linked lists ?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":29,
+    "topic":"Linked list",
+    "question":"Why is merge sort stable and suitable for linked lists?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Easy"
+  },
+  {
+    "sr no":30,
+    "topic":"Linked list",
+    "question":"How would you compare Dynamic Arrays Vs Linked Lists?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":31,
+    "topic":"Hash",
+    "question":"What is a Hash Function?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":32,
+    "topic":"Hash",
+    "question":"What is the time complexity of inserting and retrieving an element from a hashmap or dictionary?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Hard"
+  },
+  {
+    "sr no":33,
+    "topic":"Hash",
+    "question":"What are Collisions in Hashing?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":34,
+    "topic":"Hash",
+    "question":"What is Open Addressing and separate chaining ?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":35,
+    "topic":"Hash",
+    "question":"Why do we use hashing?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":36,
+    "topic":"Hash",
+    "question":"Why does hashing give O(1) average but O(n) worst-case time?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":37,
+    "topic":"Hash",
+    "question":"Why is hashing not always memory efficient?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":38,
+    "topic":"Searching",
+    "question":"What is the difference between linear search and binary search?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Easy"
+  },
+  {
+    "sr no":39,
+    "topic":"Searching",
+    "question":"What is the time complexity of binary search?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Easy"
+  },
+  {
+    "sr no":40,
+    "topic":"Searching",
+    "question":"What is the difference between depth-first search (DFS) and breadth-first search (BFS)?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Hard"
+  },
+  {
+    "sr no":41,
+    "topic":"Searching",
+    "question":"What are the advantages of binary search over linear search?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Easy"
+  },
+  {
+    "sr no":42,
+    "topic":"Searching",
+    "question":"How does hash-based searching work?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":43,
+    "topic":"Searching",
+    "question":"What happens if binary search is applied on unsorted data?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Easy"
+  },
+  {
+    "sr no":44,
+    "topic":"Searching",
+    "question":"What is the difference between iterative and recursive binary search?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Easy"
+  },
+  {
+    "sr no":45,
+    "topic":"Searching",
+    "question":"What is exponential search and when is it used?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":46,
+    "topic":"Searching",
+    "question":"Why does binary search work only on sorted data?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Easy"
+  },
+  {
+    "sr no":47,
+    "topic":"Searching",
+    "question":"What are the limitations of binary search?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Easy"
+  },
+  {
+    "sr no":48,
+    "topic":"Searching",
+    "question":"How would you find first and last occurrence of an element?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":49,
+    "topic":"Searching",
+    "question":"Explain the concept of ternary search.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":50,
+    "topic":"Sorting",
+    "question":"What is Bubble Sort, and when would you use it?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":51,
+    "topic":"Sorting",
+    "question":"Explain the concept of Selection Sort.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":52,
+    "topic":"Sorting",
+    "question":"What is the difference between Merge Sort and Quick Sort?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Easy"
+  },
+  {
+    "sr no":53,
+    "topic":"Sorting",
+    "question":"What is the time complexity of Radix Sort?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":54,
+    "topic":"Sorting",
+    "question":"When is it better to use Heap Sort?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":55,
+    "topic":"Sorting",
+    "question":"Explain Bucket Sort and its application.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":56,
+    "topic":"Sorting",
+    "question":"What is pivot in Quick Sort?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":57,
+    "topic":"Sorting",
+    "question":"Why is Heap Sort rarely used in practice?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":58,
+    "topic":"Sorting",
+    "question":"What is space complexity of different sorting algorithms?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":59,
+    "topic":"String",
+    "question":"What is the difference between a character array and a string?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":60,
+    "topic":"String",
+    "question":"What is the difference between a mutable and immutable string?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":61,
+    "topic":"String",
+    "question":"What is the purpose of the Knuth-Morris-Pratt (KMP) algorithm?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Hard"
+  },
+  {
+    "sr no":62,
+    "topic":"String",
+    "question":"Explain the concept of \"palindrome\" and how you would check if a string is palindrome.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Easy"
+  },
+  {
+    "sr no":63,
+    "topic":"String",
+    "question":"What is the time complexity of searching for a character in a string?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":64,
+    "topic":"String",
+    "question":"What is the difference between shallow copy and deep copy in strings?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":65,
+    "topic":"String",
+    "question":"Why is Boyer-Moore faster in practice than KMP?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Hard"
+  },
+  {
+    "sr no":66,
+    "topic":"String",
+    "question":"When would you choose KMP over Rabin-Karp?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Hard"
+  },
+  {
+    "sr no":67,
+    "topic":"Stack",
+    "question":"What is the time complexity of inserting an element at the bottom of a stack?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":68,
+    "topic":"Stack",
+    "question":"What are the operations performed on a stack?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":69,
+    "topic":"Stack",
+    "question":"Why is a stack useful for function call management in programming languages?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":70,
+    "topic":"Stack",
+    "question":"What is a stack overflow?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":71,
+    "topic":"Stack",
+    "question":"What is a stack underflow?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":72,
+    "topic":"Stack",
+    "question":"How can a stack be used to check if an expression containing three types of brackets [, ( and { is balanced?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":73,
+    "topic":"Stack",
+    "question":"How many queues needed to implement a stack ?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":74,
+    "topic":"Stack",
+    "question":"What is the difference between stack and queue?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":75,
+    "topic":"Stack",
+    "question":"What are limitations of stack?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":76,
+    "topic":"Queue",
+    "question":"What are the main operations of a queue?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":77,
+    "topic":"Queue",
+    "question":"What problem does a circular queue solve compared to a simple linear queue?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":78,
+    "topic":"Queue",
+    "question":"What are the applications of a queue?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":79,
+    "topic":"Queue",
+    "question":"What is priority queue, and how is it different from a normal queue?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":80,
+    "topic":"Queue",
+    "question":"What is a deque and how is it different from a queue?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":81,
+    "topic":"Queue",
+    "question":"What are advantages of linked list queue?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":82,
+    "topic":"Queue",
+    "question":"Why is queue preferred in BFS?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":83,
+    "topic":"Recursion",
+    "question":"What are the base case and recursive case in recursion?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":84,
+    "topic":"Recursion",
+    "question":"What is recursion?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":85,
+    "topic":"Recursion",
+    "question":"What is Tail Recursion?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":86,
+    "topic":"Recursion",
+    "question":"Why is Tail Recursion Important?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":87,
+    "topic":"Recursion",
+    "question":"What is the time complexity of a recursive algorithm?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":88,
+    "topic":"Backtracking",
+    "question":"What is backtracking?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":89,
+    "topic":"Backtracking",
+    "question":"How is backtracking different from dynamic programming?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Hard"
+  },
+  {
+    "sr no":90,
+    "topic":"Backtracking",
+    "question":"Explain how you would solve the N-Queens problem using backtracking.",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":91,
+    "topic":"Backtracking",
+    "question":"Can backtracking be applied to solve the traveling salesman problem? If yes, how?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":92,
+    "topic":"Backtracking",
+    "question":"Why is backtracking not always optimal?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":93,
+    "topic":"Backtracking",
+    "question":"When should you NOT use backtracking?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":94,
+    "topic":"Backtracking",
+    "question":"Why is backtracking preferred over brute force?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":95,
+    "topic":"Tree",
+    "question":"What are the components of a tree?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":96,
+    "topic":"Tree",
+    "question":"What are the basic operations performed on a tree?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":97,
+    "topic":"Tree",
+    "question":"In a Binary Tree ,what is the maximum number of nodes at level L ?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":98,
+    "topic":"Tree",
+    "question":"Explain different types of trees ?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":99,
+    "topic":"Tree",
+    "question":"What is the difference betweeen balanced binary tree and complete binary tree",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":100,
+    "topic":"Tree",
+    "question":"What are the advantages and disadvantages of using trees?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":101,
+    "topic":"Tree",
+    "question":"Describe the different tree traversal methods",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":102,
+    "topic":"Tree",
+    "question":"What is depth of a node?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":103,
+    "topic":"Tree",
+    "question":"What is degree of a node?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":104,
+    "topic":"Tree",
+    "question":"What is difference between height and depth?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":105,
+    "topic":"Tree",
+    "question":"What is difference between tree height and level count?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":106,
+    "topic":"Graph",
+    "question":"What are the types of graphs?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":107,
+    "topic":"Graph",
+    "question":"What is a cycle in a graph?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":108,
+    "topic":"Graph",
+    "question":"What is the adjacency matrix representation of a graph?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":109,
+    "topic":"Graph",
+    "question":"What is depth-first search",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":110,
+    "topic":"Graph",
+    "question":"What is breadth-first search",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":111,
+    "topic":"Graph",
+    "question":"What is the time complexity of DFS and BFS",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Hard"
+  },
+  {
+    "sr no":112,
+    "topic":"Graph",
+    "question":"What is a spanning tree of a graph?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Hard"
+  },
+  {
+    "sr no":113,
+    "topic":"Graph",
+    "question":"What is Kruskal\u2019s algorithm?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":114,
+    "topic":"Graph",
+    "question":"What is Prim\u2019s algorithm?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":115,
+    "topic":"DP",
+    "question":"What is Dynamic Programming?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  },
+  {
+    "sr no":116,
+    "topic":"DP",
+    "question":"What is 0\/1 knapsack problem?",
+    "questions":null,
+    "if two computers are connected directly using a cross-over cable, can they communicate without ip addresses? why or why not?":null,
+    "difficulty":"Medium"
+  }
+]

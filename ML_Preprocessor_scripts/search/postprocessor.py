@@ -22,4 +22,4 @@ def group_by_topic(questions: list[dict]) -> dict[str, list]:
 
 def sort_by_difficulty(questions: list[dict]) -> list[dict]:
     order = {"easy": 0, "medium": 1, "hard": 2}
-    return sorted(questions, key=lambda q: order.get(q.get("difficulty", "medium").lower(), 1))
+    return sorted(questions, key=lambda q: order.get(str(q.get("difficulty", "medium")).strip().lower(), 1))
