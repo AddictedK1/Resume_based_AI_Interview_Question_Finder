@@ -58,6 +58,22 @@ Server runs at `http://localhost:5000` by default.
 
 - If SMTP is not configured, verification/reset links are printed in server logs for local development.
 - Admin role is never assigned during signup. Promote a trusted user manually in MongoDB by setting `role` to `admin`.
+- AI practice evaluation supports Gemini when configured. Without Gemini key, the server falls back to built-in heuristic scoring.
+
+## Gemini setup for answer evaluation
+
+Set these in `.env`:
+
+```dotenv
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL=gemini-1.5-flash
+```
+
+Then restart backend server. The endpoint `POST /api/questions/practice` will use Gemini to assess:
+
+- answer relevance to the question (`isMatch`)
+- whether answer needs improvement (`shouldImprove`)
+- rubric scores, strengths, improvements, and summary feedback
 
 ## Which file to run
 

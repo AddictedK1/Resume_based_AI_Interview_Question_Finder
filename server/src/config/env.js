@@ -11,6 +11,11 @@ const envSchema = z.object({
   JWT_ACCESS_SECRET: z.string().min(32),
   JWT_ACCESS_EXPIRY: z.string().default("15m"),
   JWT_REFRESH_SECRET: z.string().min(32),
+  GEMINI_API_KEY: z.preprocess(
+    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+    z.string().min(1).optional(),
+  ),
+  GEMINI_MODEL: z.string().min(1).default("gemini-1.5-flash"),
   EMAIL_TOKEN_EXPIRY_MINUTES: z.coerce.number().int().positive().default(60),
   RESET_TOKEN_EXPIRY_MINUTES: z.coerce.number().int().positive().default(30),
   SMTP_HOST: z.string().optional(),
