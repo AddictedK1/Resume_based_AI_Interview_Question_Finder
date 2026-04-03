@@ -7,15 +7,37 @@ from sentence_transformers import SentenceTransformer
 
 # Paths
 BASE_DIR = Path(__file__).parent.parent
-RAW_EXCEL = BASE_DIR / "data" / "raw" / "questions.xlsx"
+RAW_DIR   = BASE_DIR / "data" / "raw"
 OUT_JSON  = BASE_DIR / "data" / "questions.json"
 OUT_INDEX = BASE_DIR / "data" / "questions.index"
 
 
 def build():
-    # ── 1. Load Excel ────────────────────────────────────────────
-    print(f"Loading dataset from {RAW_EXCEL}...")
-    df = pd.read_excel(RAW_EXCEL)
+    # ── 1. Load all Excel files from raw folder ──────────────────
+    print(f"Loading all Excel files from {RAW_DIR}...")
+    excel_files = list(RAW_DIR.glob("*.xlsx"))
+    
+    if not excel_files:
+        print("No Excel files found!")
+        return
+    
+    print(f"Found {len(excel_files)} file(s): {[f.name for f in excel_files]}")
+    
+    # Combine all dataframes
+    dfs = []
+    for excel_file in excel_files:
+        try:
+            print(f"  Reading {excel_file.name}...")
+            df_temp = pd.read_excel(excel_file)
+            dfs.append(df_temp)
+        except Exception as e:
+            print(f"  ⚠ Error reading {excel_file.name}: {e}")
+    
+    if not dfs:
+        print("No valid data found!")
+        return
+    
+    df = pd.concat(dfs, ignore_index=True)
     print(f"Columns found: {df.columns.tolist()}")
 
     # Normalize column names to lowercase
