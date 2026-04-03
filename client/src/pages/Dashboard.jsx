@@ -33,6 +33,17 @@ export default function Dashboard() {
   const [resumeSuccess, setResumeSuccess] = useState("");
   const [submissionLoading, setSubmissionLoading] = useState(false);
   const [submissions, setSubmissions] = useState([]);
+  const [questionHistory, setQuestionHistory] = useState([]);
+  const [generatedSession, setGeneratedSession] = useState(null);
+  const [targetRole, setTargetRole] = useState("");
+  const [targetCompany, setTargetCompany] = useState("");
+  const [targetLevel, setTargetLevel] = useState("mid");
+  const [targetDomain, setTargetDomain] = useState("");
+  const [selectedPracticeQuestion, setSelectedPracticeQuestion] = useState(null);
+  const [practiceAnswer, setPracticeAnswer] = useState("");
+  const [practiceLoading, setPracticeLoading] = useState(false);
+  const [practiceFeedback, setPracticeFeedback] = useState(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
   const [submissionError, setSubmissionError] = useState("");
   const [submissionSuccess, setSubmissionSuccess] = useState("");
   const [contributionForm, setContributionForm] = useState({
@@ -79,7 +90,7 @@ export default function Dashboard() {
     bootstrapSession();
   }, [navigate]);
 
-  const fetchMySubmissions = async (currentToken) => {
+  const fetchMySubmissions = async () => {
     const response = await authFetch("/questions/submissions/me");
 
     const data = await response.json().catch(() => ({}));
@@ -91,12 +102,34 @@ export default function Dashboard() {
     setSubmissions(data.submissions || []);
   };
 
+  const loadQuestionHistory = async () => {
+    setHistoryLoading(true);
+
+    try {
+      const response = await authFetch("/questions/history");
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.message || "Could not load question history");
+      }
+
+      setQuestionHistory(data.sessions || []);
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!token) return;
 
-    fetchMySubmissions(token).catch((error) => {
+    fetchMySubmissions().catch((error) => {
       if (handleAuthFailure(error)) return;
       setSubmissionError(error.message || "Could not load your submissions");
+    });
+
+    loadQuestionHistory().catch((error) => {
+      if (handleAuthFailure(error)) return;
+      setSubmissionError(error.message || "Could not load question history");
     });
   }, [token]);
 
@@ -150,7 +183,7 @@ export default function Dashboard() {
         company: "",
         seenInInterview: "no",
       });
-      await fetchMySubmissions(token);
+      await fetchMySubmissions();
     } catch (error) {
       if (handleAuthFailure(error)) return;
       setSubmissionError(error.message || "Could not submit question");
@@ -223,11 +256,91 @@ export default function Dashboard() {
     }
   };
 
-  const handleGenerate = () => {
+  const handleSelectHistorySession = (session) => {
+    setGeneratedSession(session);
+    setSelectedPracticeQuestion(session.generatedQuestions?.[0] || null);
+    setPracticeAnswer("");
+    setPracticeFeedback(null);
+  };
+
+  const handleGenerate = async () => {
     setIsGenerating(true);
-    setTimeout(() => {
+    setSubmissionError("");
+
+    try {
+      const response = await authFetch("/questions/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          targetRole: targetRole.trim(),
+          targetCompany: targetCompany.trim(),
+          targetLevel,
+          targetDomain: targetDomain.trim(),
+          sourceFileName: resumeFileName,
+          resumeSkills: extractedSkills,
+          questionCount: 5,
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.message || "Could not generate questions");
+      }
+
+      const session = data.session;
+      setGeneratedSession(session);
+      setSelectedPracticeQuestion(session?.generatedQuestions?.[0] || null);
+      setPracticeAnswer("");
+      setPracticeFeedback(null);
+      await loadQuestionHistory();
+    } catch (error) {
+      if (handleAuthFailure(error)) return;
+      setSubmissionError(error.message || "Could not generate questions");
+    } finally {
       setIsGenerating(false);
-    }, 2000);
+    }
+  };
+
+  const handlePracticeSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!selectedPracticeQuestion) {
+      setSubmissionError("Select a question before asking for feedback.");
+      return;
+    }
+
+    setPracticeLoading(true);
+    setSubmissionError("");
+
+    try {
+      const response = await authFetch("/questions/practice", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          questionText: selectedPracticeQuestion.questionText,
+          answerText: practiceAnswer.trim(),
+          generationSessionId: generatedSession?._id || null,
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.message || "Could not analyze your answer");
+      }
+
+      setPracticeFeedback(data.attempt);
+    } catch (error) {
+      if (handleAuthFailure(error)) return;
+      setSubmissionError(error.message || "Could not analyze your answer");
+    } finally {
+      setPracticeLoading(false);
+    }
   };
 
   return (
@@ -350,56 +463,244 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={getFadeUpWithDelay(0.1)}
-          >
+          <motion.div initial="hidden" animate="visible" variants={getFadeUpWithDelay(0.1)}>
             <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-md">
-              <CardHeader className="items-center text-center">
+              <CardHeader className="text-center">
                 <CardTitle className="text-2xl">Predicted Questions</CardTitle>
-                <CardDescription>Focus zone for interview questions generated from your resume.</CardDescription>
-                <Button
-                  className="mt-2 h-11 rounded-lg"
-                  disabled={!resumeLoaded || isGenerating}
-                  onClick={handleGenerate}
-                >
-                  {isGenerating ? (
-                    <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Generating...</>
-                  ) : (
-                    <><PlayCircle className="w-5 h-5 mr-2" /> Generate Questions</>
-                  )}
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-5">
-                  <Card className="bg-white/80 dark:bg-slate-700/80 border-border/50 dark:border-slate-700/50">
-                    <CardHeader className="pb-4">
-                      <div className="flex gap-2 mb-3 flex-wrap">
-                        <span className="px-3 py-1 bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-400 text-xs font-bold rounded-full tracking-wider uppercase">System Design</span>
-                        <span className="px-3 py-1 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400 text-xs font-bold rounded-full tracking-wider uppercase">Deep Dive</span>
-                      </div>
-                      <CardTitle className="text-lg leading-relaxed">
-                        "I see you implemented a micro-frontend architecture at your last role. How did you handle shared state management and cross-app routing without causing significant latency?"
-                      </CardTitle>
-                    </CardHeader>
-                  </Card>
-
-                  <Card className="bg-white/80 dark:bg-slate-700/80 border-border/50 dark:border-slate-700/50">
-                    <CardHeader className="pb-4">
-                      <div className="flex gap-2 mb-3">
-                        <span className="px-3 py-1 bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-400 text-xs font-bold rounded-full tracking-wider uppercase">Behavioral</span>
-                      </div>
-                      <CardTitle className="text-lg leading-relaxed">
-                        "Tell me about a time when a critical bug slipped into production due to a flaw in your team's CI/CD pipeline. How did you diagnose the root cause, address it, and prevent recurrence?"
-                      </CardTitle>
-                    </CardHeader>
-                  </Card>
-
-                  <p className="text-sm text-center text-muted-foreground">
-                    Generate more questions based on your resume to keep practicing.
-                  </p>
+                <CardDescription>Generate a saved question set from your resume skills, then practice your answer below.</CardDescription>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  <Input
+                    value={targetRole}
+                    onChange={(event) => setTargetRole(event.target.value)}
+                    placeholder="Target role, e.g. Senior Frontend Engineer"
+                  />
+                  <Input
+                    value={targetCompany}
+                    onChange={(event) => setTargetCompany(event.target.value)}
+                    placeholder="Target company, e.g. Google"
+                  />
+                  <select
+                    className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                    value={targetLevel}
+                    onChange={(event) => setTargetLevel(event.target.value)}
+                  >
+                    <option value="intern">Intern</option>
+                    <option value="junior">Junior</option>
+                    <option value="mid">Mid</option>
+                    <option value="senior">Senior</option>
+                    <option value="lead">Lead</option>
+                  </select>
+                  <Input
+                    value={targetDomain}
+                    onChange={(event) => setTargetDomain(event.target.value)}
+                    placeholder="Domain, e.g. fintech"
+                  />
                 </div>
+                <div className="mt-3 flex justify-center">
+                  <Button className="h-11 rounded-lg sm:w-72" disabled={!resumeLoaded || isGenerating} onClick={handleGenerate}>
+                    {isGenerating ? (
+                      <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Generating...</>
+                    ) : (
+                      <><PlayCircle className="w-5 h-5 mr-2" /> Generate Questions</>
+                    )}
+                  </Button>
+                </div>
+              </CardHeader>
+
+              <CardContent className="space-y-6">
+                <Card className="border-border/60 bg-background/70">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg">Skill-Gap Insights</CardTitle>
+                    <CardDescription>Missing skills are inferred from your role filters vs resume skills.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {generatedSession?.skillGap ? (
+                      <>
+                        <div>
+                          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Matched skills</p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            {(generatedSession.skillGap.matchedSkills || []).length === 0 ? (
+                              <p className="text-sm text-muted-foreground">No direct matches yet.</p>
+                            ) : (
+                              generatedSession.skillGap.matchedSkills.map((skill) => (
+                                <span key={skill} className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-800 dark:bg-green-900/40 dark:text-green-200">
+                                  {skill}
+                                </span>
+                              ))
+                            )}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Missing skills</p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            {(generatedSession.skillGap.missingSkills || []).length === 0 ? (
+                              <p className="text-sm text-muted-foreground">Great coverage for this target profile.</p>
+                            ) : (
+                              generatedSession.skillGap.missingSkills.map((skill) => (
+                                <span key={skill} className="rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-900 dark:bg-amber-900/40 dark:text-amber-100">
+                                  {skill}
+                                </span>
+                              ))
+                            )}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Prioritized learning plan</p>
+                          <ul className="mt-2 space-y-1 text-sm text-foreground">
+                            {(generatedSession.skillGap.prioritizedLearningPlan || []).map((step) => (
+                              <li key={step}>• {step}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">Generate questions to see skill-gap insights and learning priorities.</p>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,0.8fr)]">
+                  <div className="space-y-4">
+                    {generatedSession?.generatedQuestions?.length ? (
+                      generatedSession.generatedQuestions.map((question, index) => (
+                        <button
+                          key={`${question.questionText}-${index}`}
+                          type="button"
+                          onClick={() => setSelectedPracticeQuestion(question)}
+                          className={`w-full rounded-2xl border p-4 text-left transition ${
+                            selectedPracticeQuestion?.questionText === question.questionText
+                              ? "border-primary bg-primary/5"
+                              : "border-border/60 bg-background hover:bg-muted/30"
+                          }`}
+                        >
+                          <div className="mb-2 flex flex-wrap gap-2">
+                            {question.tags?.map((tag) => (
+                              <span key={tag} className="rounded-full bg-primary/10 px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-primary">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                          <p className="text-sm font-medium leading-relaxed text-foreground">{question.questionText}</p>
+                          {question.focusSkill && (
+                            <p className="mt-2 text-xs text-muted-foreground">Focus skill: {question.focusSkill}</p>
+                          )}
+                        </button>
+                      ))
+                    ) : (
+                      <div className="rounded-2xl border border-dashed border-border/70 p-6 text-center text-sm text-muted-foreground">
+                        Upload your resume and generate a set of questions to save a session here.
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-4">
+                    <Card className="border-border/60 bg-background/70">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-lg">Answer Practice</CardTitle>
+                        <CardDescription>
+                          {selectedPracticeQuestion ? "Type your answer and get rubric-based feedback." : "Select a question to practice."}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div className="rounded-xl bg-muted/40 p-3 text-sm text-foreground">
+                          {selectedPracticeQuestion?.questionText || "No question selected yet."}
+                        </div>
+                        <form onSubmit={handlePracticeSubmit} className="space-y-3">
+                          <textarea
+                            className="min-h-[160px] w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                            placeholder="Write your answer here..."
+                            value={practiceAnswer}
+                            onChange={(event) => setPracticeAnswer(event.target.value)}
+                            disabled={!selectedPracticeQuestion || practiceLoading}
+                          />
+                          <Button type="submit" className="w-full" disabled={!selectedPracticeQuestion || practiceLoading}>
+                            {practiceLoading ? (
+                              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Reviewing...</>
+                            ) : (
+                              "Get Feedback"
+                            )}
+                          </Button>
+                        </form>
+                      </CardContent>
+                    </Card>
+
+                    {practiceFeedback && (
+                      <Card className="border-border/60 bg-background/70">
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-lg">Feedback</CardTitle>
+                          <CardDescription>{practiceFeedback.feedbackSummary}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <div className="grid grid-cols-2 gap-3 text-sm">
+                            {Object.entries(practiceFeedback.rubricScore || {}).map(([label, score]) => (
+                              <div key={label} className="rounded-xl border border-border/60 p-3">
+                                <p className="text-xs uppercase tracking-wide text-muted-foreground">{label}</p>
+                                <p className="mt-1 text-lg font-semibold text-foreground">{score}/10</p>
+                              </div>
+                            ))}
+                          </div>
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Strengths</p>
+                            <ul className="mt-2 space-y-1 text-sm text-foreground">
+                              {(practiceFeedback.strengths || []).map((item) => (
+                                <li key={item}>• {item}</li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Improve next</p>
+                            <ul className="mt-2 space-y-1 text-sm text-foreground">
+                              {(practiceFeedback.improvements || []).map((item) => (
+                                <li key={item}>• {item}</li>
+                              ))}
+                            </ul>
+                          </div>
+                          <p className="text-sm font-medium text-primary">Overall score: {practiceFeedback.overallScore}/10</p>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+                </div>
+
+                <Card className="border-border/60 bg-background/70">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg">Saved Practice Sets</CardTitle>
+                    <CardDescription>Revisit your past generated question sessions by timestamp.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {historyLoading ? (
+                      <p className="text-sm text-muted-foreground">Loading history...</p>
+                    ) : questionHistory.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">No saved sessions yet.</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {questionHistory.map((session) => (
+                          <button
+                            key={session._id}
+                            type="button"
+                            onClick={() => handleSelectHistorySession(session)}
+                            className="w-full rounded-xl border border-border/60 p-3 text-left hover:bg-muted/40"
+                          >
+                            <div className="flex items-center justify-between gap-3">
+                              <div>
+                                <p className="text-sm font-semibold text-foreground">
+                                  {session.targetRole || "General practice set"}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {new Date(session.createdAt).toLocaleString()} • {session.generatedQuestions?.length || 0} questions
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {[session.targetCompany, session.targetLevel, session.targetDomain].filter(Boolean).join(" • ") || "No target filters"}
+                                </p>
+                              </div>
+                              <span className="text-xs font-medium text-primary">Open</span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               </CardContent>
             </Card>
           </motion.div>
