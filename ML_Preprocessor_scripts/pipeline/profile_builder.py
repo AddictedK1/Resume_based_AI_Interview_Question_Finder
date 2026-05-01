@@ -47,3 +47,44 @@ def build_profile(resume_text: str) -> dict:
         "achievement_terms": achievement_terms,
         "sections_found":    list(sections.keys()),
     }
+
+
+# ──────────────────────────────────────────────────────────────────
+# CLI Interface for backward compatibility with Node.js
+# Can be called from command line as: python profile_builder.py <resume_path>
+# ──────────────────────────────────────────────────────────────────
+
+if __name__ == '__main__':
+    import sys
+    import json
+    
+    if len(sys.argv) < 2:
+        print(json.dumps({
+            "error": "Resume path is required",
+            "usage": "python profile_builder.py <resume_path>"
+        }))
+        sys.exit(1)
+    
+    resume_path = sys.argv[1]
+    
+    try:
+        from pdf_parser import extract_clean_text
+        
+        # Extract text from resume
+        resume_text = extract_clean_text(resume_path)
+        
+        if not resume_text or len(resume_text.strip()) < 50:
+            raise ValueError("Resume appears to be empty or invalid")
+        
+        # Build profile
+        profile = build_profile(resume_text)
+        
+        # Output as JSON
+        print(json.dumps(profile, indent=2, ensure_ascii=False))
+    
+    except Exception as e:
+        print(json.dumps({
+            "error": str(e),
+            "type": type(e).__name__
+        }))
+        sys.exit(1)

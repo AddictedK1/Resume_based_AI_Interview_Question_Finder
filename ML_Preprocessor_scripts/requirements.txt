@@ -21,6 +21,10 @@ pandas==2.0.3
 tqdm==4.65.0
 python-dotenv==1.0.0
 
+# Flask API Server
+flask==3.0.0
+flask-cors==4.0.0
+
 # Optional but recommended
 pytest==7.4.0
 black==23.7.0
