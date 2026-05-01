@@ -1,0 +1,37 @@
+# Python ML Pipeline Dockerfile
+FROM python:3.9-slim
+
+WORKDIR /app/ml_pipeline
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Download spaCy model
+RUN python -m spacy download en_core_web_sm
+
+# Copy application code
+COPY pipeline ./pipeline
+COPY search ./search
+COPY scripts ./scripts
+COPY data ./data
+
+# Create non-root user
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app/ml_pipeline
+USER appuser
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD python -c "import spacy, sentence_transformers, faiss; print('OK')" || exit 1
+
+# Default command (can be overridden by parent orchestration)
+CMD ["python", "-c", "print('ML Pipeline container ready')"]
