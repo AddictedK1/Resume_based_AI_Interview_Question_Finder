@@ -6,6 +6,7 @@ import { QuestionPracticeAttempt } from "../models/QuestionPracticeAttempt.js";
 import { QuestionSubmission } from "../models/QuestionSubmission.js";
 import { evaluateAnswerWithGemini } from "../services/geminiService.js";
 import { extractSkillsFromResumeText } from "../utils/skillExtractor.js";
+import MLPipelineService from "../utils/mlPipelineService.js";
 
 const normalizeTags = (tags) =>
     [
@@ -422,9 +423,13 @@ export const generateQuestions = async (req, res) => {
         targetDomain,
         sourceFileName,
         resumeSkills,
-        questionCount,
+        questionCount = 10,
         forceNew,
+        resumePath, // Path to the uploaded resume
     } = req.body;
+
+    // Default to at least 10 questions
+    const requestedCount = Math.max(10, questionCount || 10);
 
     const sessionIdentity = buildSessionIdentity({
         targetRole,
@@ -433,9 +438,10 @@ export const generateQuestions = async (req, res) => {
         targetDomain,
         sourceFileName,
         resumeSkills,
-        questionCount,
+        questionCount: requestedCount,
     });
 
+    // Check for existing matching session
     if (!forceNew) {
         const existingSessions = await QuestionGenerationSession.find({
             user: req.user.sub,
@@ -457,6 +463,7 @@ export const generateQuestions = async (req, res) => {
         }
     }
 
+    // Build skill gap insights
     const skillGap = buildSkillGapInsights({
         resumeSkills,
         targetRole,
@@ -465,20 +472,104 @@ export const generateQuestions = async (req, res) => {
         targetDomain,
     });
 
-    const generationSkills =
+    // Select skills for ML API search
+    const searchSkills =
         resumeSkills && resumeSkills.length > 0
             ? resumeSkills
-            : skillGap.missingSkills.slice(0, questionCount);
+            : skillGap.missingSkills.slice(0, 5);
 
-    const generatedQuestions = buildGeneratedQuestions({
-        resumeSkills: generationSkills,
-        targetRole,
-        targetCompany,
-        targetLevel,
-        targetDomain,
-        questionCount,
-    });
+    // Build profile string for ML API
+    const profileParts = [
+        searchSkills.length > 0
+            ? `Technical skills: ${searchSkills.join(", ")}`
+            : "",
+        targetRole ? `Target role: ${targetRole}` : "",
+        targetCompany ? `Target company: ${targetCompany}` : "",
+        targetLevel ? `Target level: ${targetLevel}` : "",
+        targetDomain ? `Target domain: ${targetDomain}` : "",
+    ]
+        .filter(Boolean)
+        .join(". ");
 
+    const profileString =
+        profileParts ||
+        "Looking for interview questions based on resume skills";
+
+    let generatedQuestions = [];
+    let mlApiError = null;
+
+    // Try to fetch real questions from ML API
+    try {
+        console.log("[generateQuestions] Calling ML API to search for questions...");
+        
+        const mlQuestions = await MLPipelineService.searchQuestions(
+            profileString,
+            searchSkills,
+            Math.max(requestedCount, 30), // Request more to ensure we get at least 10
+            0.15 // Lower threshold to get more results
+        );
+
+        // Transform ML API questions to session format
+        if (mlQuestions && mlQuestions.length > 0) {
+            generatedQuestions = mlQuestions
+                .slice(0, requestedCount) // Take only requested count
+                .map((q) => ({
+                    questionText:
+                        q.question || q.questionText || "Interview question",
+                    tags: normalizeTags([
+                        ...(q.tags || []),
+                        targetRole,
+                        targetCompany,
+                        targetLevel,
+                    ]),
+                    focusSkill: q.topic || q.tags?.[0] || searchSkills[0] || "",
+                }));
+
+            console.log(
+                `[generateQuestions] ✅ Got ${generatedQuestions.length} real questions from ML API`
+            );
+        }
+    } catch (error) {
+        mlApiError = error.message;
+        console.warn(
+            "[generateQuestions] ML API error (will use fallback):",
+            mlApiError
+        );
+    }
+
+    // Fallback: Use template-based generation if ML API fails
+    if (generatedQuestions.length === 0) {
+        console.log(
+            "[generateQuestions] Using fallback template-based question generation..."
+        );
+        generatedQuestions = buildGeneratedQuestions({
+            resumeSkills: searchSkills,
+            targetRole,
+            targetCompany,
+            targetLevel,
+            targetDomain,
+            questionCount: requestedCount,
+        });
+    }
+
+    // Ensure we have at least 10 questions
+    if (generatedQuestions.length < 10) {
+        const additionalCount = 10 - generatedQuestions.length;
+        console.log(
+            `[generateQuestions] Adding ${additionalCount} fallback questions to reach minimum of 10`
+        );
+        const fallbackQuestions = buildGeneratedQuestions({
+            resumeSkills: searchSkills,
+            targetRole,
+            targetCompany,
+            targetLevel,
+            targetDomain,
+            questionCount: additionalCount,
+        });
+        generatedQuestions = [...generatedQuestions, ...fallbackQuestions];
+    }
+
+    // Create session with generated questions
     const session = await QuestionGenerationSession.create({
         user: req.user.sub,
         targetRole,
@@ -488,12 +579,17 @@ export const generateQuestions = async (req, res) => {
         sourceFileName,
         resumeSkills: normalizeTags(resumeSkills),
         skillGap,
-        generatedQuestions,
+        generatedQuestions: generatedQuestions.slice(0, requestedCount),
     });
+
+    const responseData = await shapeSessionForResponse(session);
 
     return res.status(201).json({
         message: "Questions generated successfully",
-        session,
+        session: responseData,
+        usedMLAPI: generatedQuestions.length > 0 && !mlApiError,
+        mlAPIError: mlApiError || null,
+        questionCount: responseData.generatedQuestions.length,
     });
 };
 

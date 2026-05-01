@@ -72,7 +72,7 @@ async function processResumeAsync(sessionId, resumePath, userId, startTime) {
     const profileResult = await MLPipelineService.processResume(resumePath);
 
     session.profileString = profileResult.profileString;
-    session.extractedSkills = profileResult.extractedSkills || [];
+    session.extractedSkills = profileResult.rawSkills || [];
     session.expandedSkills = profileResult.expandedSkills || [];
 
     // Step 2: Search for relevant questions

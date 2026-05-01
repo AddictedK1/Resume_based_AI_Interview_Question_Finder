@@ -1,11 +1,10 @@
 /**
  * ML Pipeline Service - Bridges Node.js backend with Python ML pipeline
- * Handles resume processing, skill extraction, and question generation
+ * Communicates with Flask API server instead of spawning processes
  */
 
-import { spawn } from 'child_process';
-import path from 'path';
 import fs from 'fs/promises';
+import path from 'path';
 import { fileURLToPath } from 'url';
 import { ApiError } from './apiError.js';
 import { env } from '../config/env.js';
@@ -14,16 +13,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const ML_SCRIPTS_DIR = path.join(__dirname, '../../..', 'ML_Preprocessor_scripts');
-const TEMP_DIR = path.join(ML_SCRIPTS_DIR, 'temp_resumes');
 const USER_RESUMES_DIR = path.join(ML_SCRIPTS_DIR, 'user_resumes');
+
+// ML API Server configuration
+const ML_API_BASE_URL = env.ML_API_URL || 'http://localhost:5000';
+const ML_API_TIMEOUT = 60000; // 60 seconds timeout for long-running operations
 
 class MLPipelineService {
   /**
-   * Initialize temp directories
+   * Initialize directories
    */
   static async initializeDirs() {
     try {
-      await fs.mkdir(TEMP_DIR, { recursive: true });
       await fs.mkdir(USER_RESUMES_DIR, { recursive: true });
     } catch (error) {
       console.error('Error initializing directories:', error);
@@ -31,7 +32,7 @@ class MLPipelineService {
   }
 
   /**
-   * Save resume buffer to temporary file
+   * Save resume buffer to file
    * @param {Buffer} pdfBuffer - PDF file buffer
    * @param {string} userId - User ID for organization
    * @returns {Promise<string>} - Path to saved resume
@@ -51,150 +52,243 @@ class MLPipelineService {
   }
 
   /**
-   * Process resume and extract skills using Python pipeline
-   * @param {string} resumePath - Path to resume PDF
-   * @returns {Promise<Object>} - { profileString, expandedSkills }
+   * Make HTTP request to ML API with timeout
+   * @private
    */
-  static async processResume(resumePath) {
-    return new Promise((resolve, reject) => {
-      const pythonScript = path.join(
-        ML_SCRIPTS_DIR,
-        'pipeline/profile_builder.py'
+  static async _makeMLAPIRequest(endpoint, method = 'GET', data = null) {
+    try {
+      const url = `${ML_API_BASE_URL}${endpoint}`;
+      const options = {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        timeout: ML_API_TIMEOUT,
+      };
+
+      if (data && (method === 'POST' || method === 'PUT')) {
+        options.body = JSON.stringify(data);
+      }
+
+      const response = await fetch(url, options);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.error || `ML API error: ${response.statusText}`
+        );
+      }
+
+      return await response.json();
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        throw new ApiError(504, 'ML API request timeout');
+      }
+      console.error(`ML API request failed (${endpoint}):`, error);
+      throw new ApiError(
+        503,
+        `ML API unavailable: ${error.message}`
       );
-
-      const python = spawn('python3', [pythonScript, resumePath], {
-        cwd: ML_SCRIPTS_DIR,
-        timeout: 30000, // 30 seconds timeout
-      });
-
-      let stdout = '';
-      let stderr = '';
-
-      python.stdout.on('data', (data) => {
-        stdout += data.toString();
-      });
-
-      python.stderr.on('data', (data) => {
-        stderr += data.toString();
-        console.error('Python stderr:', data.toString());
-      });
-
-      python.on('close', (code) => {
-        if (code !== 0) {
-          reject(
-            new ApiError(
-              500,
-              `Resume processing failed: ${stderr || 'Unknown error'}`
-            )
-          );
-          return;
-        }
-
-        try {
-          const result = JSON.parse(stdout);
-          resolve(result);
-        } catch (parseError) {
-          reject(new ApiError(500, `Invalid response from ML pipeline: ${parseError.message}`));
-        }
-      });
-
-      python.on('error', (error) => {
-        reject(new ApiError(500, `Failed to spawn Python process: ${error.message}`));
-      });
-    });
+    }
   }
 
   /**
-   * Search for questions using FAISS + tag boosting
-   * @param {string} profileString - User's semantic profile
-   * @param {Array<string>} userSkills - Extracted user skills
-   * @param {number} topK - Number of results
-   * @returns {Promise<Array>} - Array of recommended questions
+   * Check if ML API is healthy
+   * @returns {Promise<boolean>}
    */
-  static async searchQuestions(profileString, userSkills, topK = 30) {
-    return new Promise((resolve, reject) => {
-      const pythonScript = path.join(
-        ML_SCRIPTS_DIR,
-        'search/searcher.py'
+  static async healthCheck() {
+    try {
+      const response = await this._makeMLAPIRequest('/health');
+      return response.success === true;
+    } catch (error) {
+      console.warn('ML API health check failed:', error.message);
+      return false;
+    }
+  }
+
+  /**
+   * Process resume using ML API
+   * Extract skills and build semantic profile
+   * 
+   * @param {string} resumePath - Path to resume PDF
+   * @returns {Promise<Object>} - { profileString, rawSkills, expandedSkills, ... }
+   */
+  static async processResume(resumePath) {
+    try {
+      console.log('[MLPipelineService] Processing resume:', resumePath);
+
+      // Read PDF file as buffer
+      const pdfBuffer = await fs.readFile(resumePath);
+      const base64Data = pdfBuffer.toString('base64');
+
+      // Call ML API /extract endpoint
+      const response = await this._makeMLAPIRequest('/api/extract', 'POST', {
+        resume_base64: base64Data,
+        filename: path.basename(resumePath),
+      });
+
+      if (!response.success) {
+        throw new Error(response.error || 'Resume processing failed');
+      }
+
+      console.log('[MLPipelineService] ✅ Resume processed successfully');
+      console.log(`   - Found ${response.data.expanded_skills?.length || 0} expanded skills`);
+      console.log(`   - Found ${response.data.sections_found?.length || 0} resume sections`);
+
+      // Return in expected format
+      return {
+        profileString: response.data.profile_string,
+        rawSkills: response.data.raw_skills || [],
+        expandedSkills: response.data.expanded_skills || [],
+        extractedData: response.data.extracted_data || {},
+        sectionsFound: response.data.sections_found || [],
+      };
+    } catch (error) {
+      console.error('Resume processing error:', error);
+      throw new ApiError(
+        500,
+        error.message || 'Failed to process resume'
+      );
+    }
+  }
+
+  /**
+   * Search for interview questions using ML API
+   * 
+   * @param {string} profileString - User's semantic profile
+   * @param {Array<string>} userSkills - Expanded user skills
+   * @param {number} topK - Number of results to return
+   * @param {number} minScore - Minimum similarity threshold
+   * @returns {Promise<Array>} - Array of relevant questions
+   */
+  static async searchQuestions(
+    profileString,
+    userSkills = [],
+    topK = 30,
+    minScore = 0.25
+  ) {
+    try {
+      if (!profileString) {
+        throw new ApiError(400, 'Profile string is required');
+      }
+
+      if (topK < 1 || topK > 100) {
+        throw new ApiError(400, 'topK must be between 1 and 100');
+      }
+
+      console.log('[MLPipelineService] Searching for questions');
+      console.log(`   - top_k: ${topK}`);
+      console.log(`   - min_score: ${minScore}`);
+      console.log(`   - user_skills: ${userSkills.length}`);
+
+      // Call ML API /search endpoint
+      const response = await this._makeMLAPIRequest('/api/search', 'POST', {
+        profile_string: profileString,
+        user_skills: userSkills,
+        top_k: topK,
+        min_score: minScore,
+        use_tag_boosting: true,
+        with_explanations: false,
+      });
+
+      if (!response.success) {
+        throw new Error(response.error || 'Question search failed');
+      }
+
+      console.log(
+        `[MLPipelineService] ✅ Found ${response.data.questions?.length || 0} questions in ${response.data.processing_time_ms}ms`
       );
 
-      // Create a temporary Python script that imports and runs the searcher
-      const searcherRunner = path.join(TEMP_DIR, `searcher_${Date.now()}.py`);
-      const searchCode = `
-import sys
-sys.path.insert(0, '${ML_SCRIPTS_DIR}')
-import json
-from search.searcher import SemanticSearcher
+      return response.data.questions || [];
+    } catch (error) {
+      console.error('Question search error:', error);
+      throw new ApiError(
+        500,
+        error.message || 'Failed to search questions'
+      );
+    }
+  }
 
-searcher = SemanticSearcher(
-    '${path.join(ML_SCRIPTS_DIR, 'data/questions.json')}',
-    '${path.join(ML_SCRIPTS_DIR, 'data/questions.index')}'
-)
+  /**
+   * End-to-end resume processing and question generation
+   * 
+   * @param {string} resumePath - Path to resume PDF
+   * @param {number} topK - Number of questions to generate
+   * @param {number} minScore - Minimum similarity threshold
+   * @returns {Promise<Object>} - Complete processing result
+   */
+  static async processResumeEndToEnd(resumePath, topK = 30, minScore = 0.25) {
+    try {
+      console.log('[MLPipelineService] Starting end-to-end processing...');
 
-results = searcher.search(
-    '${profileString}',
-    user_skills=${json.dumps(userSkills)},
-    use_tag_boosting=True,
-    top_k=${topK}
-)
+      // Read PDF file as buffer
+      const pdfBuffer = await fs.readFile(resumePath);
+      const base64Data = pdfBuffer.toString('base64');
 
-print(json.dumps(results))
-`;
+      // Call ML API /process endpoint (single call for efficiency)
+      const response = await this._makeMLAPIRequest('/api/process', 'POST', {
+        resume_base64: base64Data,
+        filename: path.basename(resumePath),
+        top_k: topK,
+        min_score: minScore,
+      });
 
-      fs.writeFile(searcherRunner, searchCode)
-        .then(() => {
-          const python = spawn('python3', [searcherRunner], {
-            cwd: ML_SCRIPTS_DIR,
-            timeout: 15000, // 15 seconds timeout
-          });
+      if (!response.success) {
+        throw new Error(response.error || 'Processing failed');
+      }
 
-          let stdout = '';
-          let stderr = '';
+      console.log(
+        `[MLPipelineService] ✅ End-to-end processing completed in ${response.data.processing_time_ms}ms`
+      );
+      console.log(
+        `   - Extracted ${response.data.expanded_skills?.length || 0} skills`
+      );
+      console.log(
+        `   - Generated ${response.data.questions?.length || 0} questions`
+      );
 
-          python.stdout.on('data', (data) => {
-            stdout += data.toString();
-          });
+      // Return in expected format
+      return {
+        profileString: response.data.profile_string,
+        rawSkills: response.data.raw_skills || [],
+        expandedSkills: response.data.expanded_skills || [],
+        extractedData: response.data.extracted_data || {},
+        sectionsFound: response.data.sections_found || [],
+        questions: response.data.questions || [],
+        processingTime: response.data.processing_time_ms || 0,
+      };
+    } catch (error) {
+      console.error('End-to-end processing error:', error);
+      throw new ApiError(
+        500,
+        error.message || 'Failed to process resume'
+      );
+    }
+  }
 
-          python.stderr.on('data', (data) => {
-            stderr += data.toString();
-            console.error('Python stderr:', data.toString());
-          });
+  /**
+   * Expand a list of skills using ontology
+   * 
+   * @param {Array<string>} skills - Skills to expand
+   * @returns {Promise<Object>} - { inputSkills, expandedSkills, newSkills }
+   */
+  static async expandSkills(skills) {
+    try {
+      if (!Array.isArray(skills) || skills.length === 0) {
+        throw new ApiError(400, 'Skills must be a non-empty array');
+      }
 
-          python.on('close', (code) => {
-            // Clean up temp script
-            fs.unlink(searcherRunner).catch(() => {});
+      const response = await this._makeMLAPIRequest('/api/expand-skills', 'POST', {
+        skills,
+      });
 
-            if (code !== 0) {
-              reject(
-                new ApiError(
-                  500,
-                  `Question search failed: ${stderr || 'Unknown error'}`
-                )
-              );
-              return;
-            }
+      if (!response.success) {
+        throw new Error(response.error || 'Skill expansion failed');
+      }
 
-            try {
-              const results = JSON.parse(stdout);
-              resolve(results);
-            } catch (parseError) {
-              reject(
-                new ApiError(500, `Invalid response from searcher: ${parseError.message}`)
-              );
-            }
-          });
-
-          python.on('error', (error) => {
-            fs.unlink(searcherRunner).catch(() => {});
-            reject(
-              new ApiError(500, `Failed to spawn Python process: ${error.message}`)
-            );
-          });
-        })
-        .catch((error) => {
-          reject(new ApiError(500, `Failed to create searcher script: ${error.message}`));
-        });
-    });
+      return response.data;
+    } catch (error) {
+      console.error('Skill expansion error:', error);
+      throw new ApiError(500, error.message || 'Failed to expand skills');
+    }
   }
 
   /**
@@ -220,6 +314,7 @@ print(json.dumps(results))
    */
   static async validateSetup() {
     try {
+      // Check if data files exist
       const questionsPath = path.join(
         ML_SCRIPTS_DIR,
         'data/questions.json'
@@ -235,7 +330,10 @@ print(json.dumps(results))
         .then(() => true)
         .catch(() => false);
 
-      return questionsExists && indexExists;
+      // Also check if ML API is healthy
+      const apiHealthy = await this.healthCheck();
+
+      return questionsExists && indexExists && apiHealthy;
     } catch (error) {
       console.error('ML pipeline validation failed:', error);
       return false;
