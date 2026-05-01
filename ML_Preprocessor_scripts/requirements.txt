@@ -1,0 +1,27 @@
+# ML Pipeline Dependencies
+# Python 3.9+
+
+# PDF Processing
+pypdf==3.17.1
+
+# NLP & Language Processing
+spacy==3.7.2
+sentence-transformers==2.2.2
+
+# Vector Similarity Search
+faiss-cpu==1.7.4
+
+# Numerical Computing
+numpy==1.24.3
+
+# Data Processing
+pandas==2.0.3
+
+# Utilities
+tqdm==4.65.0
+python-dotenv==1.0.0
+
+# Optional but recommended
+pytest==7.4.0
+black==23.7.0
+flake8==6.0.0

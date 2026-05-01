@@ -8,6 +8,8 @@ import AdminPanel from "./pages/AdminPanel";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import AdminRoute from "./components/AdminRoute";
+import ResumeUploadCard from "./components/ResumeUploadCard";
+import QuestionsDisplay from "./components/QuestionsDisplay";
 import { clearAuthSession, ensureSession } from "./lib/auth";
 import { Navigate } from "react-router-dom";
 
@@ -52,6 +54,22 @@ function App() {
             element={
               <UserRoute>
                 <Dashboard />
+              </UserRoute>
+            }
+          />
+          <Route
+            path="/dashboard/upload"
+            element={
+              <UserRoute>
+                <ResumeUploadCard />
+              </UserRoute>
+            }
+          />
+          <Route
+            path="/dashboard/questions/:sessionId"
+            element={
+              <UserRoute>
+                <QuestionsDisplay />
               </UserRoute>
             }
           />
