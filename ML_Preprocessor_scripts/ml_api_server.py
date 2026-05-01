@@ -489,7 +489,7 @@ def process_resume_end_to_end():
 # ──────────────────────────────────────────────────────────────────
 
 if __name__ == '__main__':
-    port = int(os.environ.get('ML_API_PORT', 5000))
+    port = int(os.environ.get('ML_API_PORT', 5001))
     debug = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
     
     logger.info(f"Starting ML API Server on port {port}")

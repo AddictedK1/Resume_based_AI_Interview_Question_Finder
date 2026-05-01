@@ -390,29 +390,69 @@ export const uploadResumeAndExtractSkills = async (req, res) => {
         throw new ApiError(400, "Resume PDF is required");
     }
 
-    const parser = new PDFParse({ data: req.file.buffer });
-    let parsed;
+    const userId = req.user.sub;
 
     try {
-        parsed = await parser.getText();
-    } finally {
-        await parser.destroy();
+        // Step 1: Save resume file for ML pipeline
+        const resumePath = await MLPipelineService.saveResumeFile(
+            req.file.buffer,
+            userId,
+        );
+
+        // Step 2: Process resume with ML pipeline (extract text + build profile)
+        const profileResult =
+            await MLPipelineService.processResume(resumePath);
+
+        // Use ML-extracted skills (raw skills from the pipeline)
+        const rawSkills = profileResult.rawSkills || [];
+        const expandedSkills = profileResult.expandedSkills || [];
+
+        return res.status(200).json({
+            message: "Resume analyzed with ML pipeline successfully",
+            fileName: req.file.originalname,
+            skills: rawSkills,
+            expandedSkills: expandedSkills,
+            totalSkills: rawSkills.length,
+            totalExpanded: expandedSkills.length,
+            sectionsFound: profileResult.sectionsFound || [],
+        });
+    } catch (error) {
+        // Fallback to simple regex extractor if ML API is down
+        console.warn(
+            "ML pipeline unavailable, falling back to regex extractor:",
+            error.message,
+        );
+
+        const parser = new PDFParse({ data: req.file.buffer });
+        let parsed;
+        try {
+            parsed = await parser.getText();
+        } finally {
+            await parser.destroy();
+        }
+
+        const resumeText = (parsed?.text || "").trim();
+        if (!resumeText) {
+            throw new ApiError(
+                400,
+                "Could not read text from the uploaded PDF",
+            );
+        }
+
+        const skills = extractSkillsFromResumeText(resumeText);
+
+        return res.status(200).json({
+            message:
+                "Resume analyzed successfully (fallback mode — ML API unavailable)",
+            fileName: req.file.originalname,
+            skills,
+            expandedSkills: skills,
+            totalSkills: skills.length,
+            totalExpanded: skills.length,
+            sectionsFound: [],
+            fallback: true,
+        });
     }
-
-    const resumeText = (parsed?.text || "").trim();
-
-    if (!resumeText) {
-        throw new ApiError(400, "Could not read text from the uploaded PDF");
-    }
-
-    const skills = extractSkillsFromResumeText(resumeText);
-
-    return res.status(200).json({
-        message: "Resume uploaded and analyzed successfully",
-        fileName: req.file.originalname,
-        skills,
-        totalSkills: skills.length,
-    });
 };
 
 export const generateQuestions = async (req, res) => {
