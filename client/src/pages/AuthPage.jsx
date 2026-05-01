@@ -180,7 +180,7 @@ export default function AuthPage({ type = "login" }) {
                   <label className="text-sm font-medium text-foreground">Full Name</label>
                   <Input
                     type="text"
-                    placeholder="John Doe"
+                    placeholder="Enter your name"
                     required
                     className="h-12 bg-secondary dark:bg-slate-800"
                     value={form.fullName}
