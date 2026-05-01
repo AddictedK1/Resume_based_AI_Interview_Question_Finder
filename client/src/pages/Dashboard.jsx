@@ -9,6 +9,10 @@ import {
     LogOut,
     ShieldCheck,
     Send,
+    BookOpen,
+    Sparkles,
+    ChevronDown,
+    ChevronUp,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -59,6 +63,12 @@ export default function Dashboard() {
         company: "",
         seenInInterview: "no",
     });
+
+    // ── ML Dataset Questions state ──
+    const [mlQuestions, setMlQuestions] = useState(null);
+    const [mlQuestionsLoading, setMlQuestionsLoading] = useState(false);
+    const [mlQuestionsError, setMlQuestionsError] = useState("");
+    const [expandedSkills, setExpandedSkills] = useState({});
 
     // Multi-session support
     const {
@@ -298,6 +308,62 @@ export default function Dashboard() {
         questionCount: 5,
     });
 
+    // ── Fetch ML Dataset Questions by skills ──
+    const handleFetchMLQuestions = async () => {
+        if (!extractedSkills.length) return;
+
+        setMlQuestionsLoading(true);
+        setMlQuestionsError("");
+        setMlQuestions(null);
+
+        try {
+            const response = await authFetch("/ml/questions-by-skills", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    skills: extractedSkills,
+                    maxPerSkill: 5,
+                }),
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(
+                    data.error || data.message || "Could not fetch ML questions",
+                );
+            }
+
+            setMlQuestions(data);
+
+            // Auto-expand skills that have matches
+            const expanded = {};
+            (data.results || []).forEach((r) => {
+                if (r.matchedCount > 0) expanded[r.skill] = true;
+            });
+            setExpandedSkills(expanded);
+        } catch (error) {
+            if (handleAuthFailure(error)) return;
+            setMlQuestionsError(
+                error.message || "Could not fetch ML questions",
+            );
+        } finally {
+            setMlQuestionsLoading(false);
+        }
+    };
+
+    const toggleSkillExpand = (skill) => {
+        setExpandedSkills((prev) => ({ ...prev, [skill]: !prev[skill] }));
+    };
+
+    const getDifficultyColor = (difficulty) => {
+        const d = (difficulty || "").toLowerCase();
+        if (d === "easy") return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200";
+        if (d === "medium") return "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200";
+        if (d === "hard") return "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200";
+        return "bg-slate-100 text-slate-700 dark:bg-slate-700/40 dark:text-slate-300";
+    };
+
     const handleGenerate = async (forceNew = false, overridePayload = null) => {
         setIsGenerating(true);
         setSubmissionError("");
@@ -529,6 +595,8 @@ export default function Dashboard() {
                                                     setExtractedSkills([]);
                                                     setResumeSuccess("");
                                                     setResumeError("");
+                                                    setMlQuestions(null);
+                                                    setMlQuestionsError("");
                                                 }}
                                             >
                                                 Remove
@@ -567,6 +635,38 @@ export default function Dashboard() {
                                                 </div>
                                             </div>
                                         )}
+
+                                    {/* ── Fetch ML Questions Button ── */}
+                                    {resumeLoaded && extractedSkills.length > 0 && (
+                                        <div className="mt-6 pt-4 border-t border-border/40 dark:border-slate-700/40">
+                                            <Button
+                                                className="w-full h-12 rounded-xl gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg shadow-violet-500/25 transition-all duration-300"
+                                                onClick={handleFetchMLQuestions}
+                                                disabled={mlQuestionsLoading}
+                                            >
+                                                {mlQuestionsLoading ? (
+                                                    <>
+                                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                                        Fetching Questions from Dataset...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Sparkles className="w-5 h-5" />
+                                                        Fetch Interview Questions from Dataset
+                                                    </>
+                                                )}
+                                            </Button>
+                                            <p className="mt-2 text-xs text-center text-muted-foreground">
+                                                Uses your extracted skills to find matching questions from the ML dataset
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {mlQuestionsError && (
+                                        <p className="mt-3 text-sm text-red-600">
+                                            {mlQuestionsError}
+                                        </p>
+                                    )}
                                 </CardContent>
                             </Card>
 
@@ -1105,6 +1205,108 @@ export default function Dashboard() {
                                     </CardContent>
                                 </Card>
                             </motion.div>
+
+                            {/* ── ML Dataset Questions Section ── */}
+                            {mlQuestions && mlQuestions.results?.length > 0 && (
+                                <motion.div
+                                    initial="hidden"
+                                    animate="visible"
+                                    variants={getFadeUpWithDelay(0.15)}
+                                >
+                                    <Card className="bg-gradient-to-br from-violet-50/80 via-white/80 to-indigo-50/80 dark:from-slate-800/90 dark:via-slate-800/80 dark:to-indigo-950/60 backdrop-blur-xl border-violet-200/60 dark:border-indigo-700/40 shadow-lg shadow-violet-500/5">
+                                        <CardHeader className="text-center">
+                                            <div className="flex items-center justify-center gap-2">
+                                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/30">
+                                                    <BookOpen className="w-5 h-5 text-white" />
+                                                </div>
+                                                <CardTitle className="text-2xl bg-gradient-to-r from-violet-700 to-indigo-600 dark:from-violet-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                                                    Dataset Interview Questions
+                                                </CardTitle>
+                                            </div>
+                                            <CardDescription className="mt-2">
+                                                {mlQuestions.message} — matched from your resume skills
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="space-y-4">
+                                            {mlQuestions.results.map((skillGroup) => (
+                                                <div
+                                                    key={skillGroup.skill}
+                                                    className="rounded-2xl border border-violet-200/60 dark:border-indigo-700/30 bg-white/70 dark:bg-slate-800/70 overflow-hidden transition-all duration-300"
+                                                >
+                                                    {/* Skill Header — clickable accordion */}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => toggleSkillExpand(skillGroup.skill)}
+                                                        className="w-full flex items-center justify-between p-4 hover:bg-violet-50/60 dark:hover:bg-indigo-900/20 transition-colors"
+                                                    >
+                                                        <div className="flex items-center gap-3">
+                                                            <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 text-white text-xs font-bold shadow-sm">
+                                                                {skillGroup.matchedCount}
+                                                            </span>
+                                                            <span className="font-semibold text-foreground">
+                                                                {skillGroup.skill}
+                                                            </span>
+                                                            {skillGroup.matchedCount === 0 && (
+                                                                <span className="text-xs text-muted-foreground italic">No matches in dataset</span>
+                                                            )}
+                                                        </div>
+                                                        {expandedSkills[skillGroup.skill] ? (
+                                                            <ChevronUp className="w-5 h-5 text-muted-foreground" />
+                                                        ) : (
+                                                            <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                                                        )}
+                                                    </button>
+
+                                                    {/* Questions List */}
+                                                    {expandedSkills[skillGroup.skill] && skillGroup.questions.length > 0 && (
+                                                        <div className="border-t border-violet-100/60 dark:border-indigo-800/30 divide-y divide-violet-100/40 dark:divide-indigo-800/20">
+                                                            {skillGroup.questions.map((q, qIndex) => (
+                                                                <div
+                                                                    key={`${skillGroup.skill}-${qIndex}`}
+                                                                    className="p-4 hover:bg-violet-50/40 dark:hover:bg-indigo-900/10 transition-colors"
+                                                                >
+                                                                    <p className="text-sm font-medium leading-relaxed text-foreground">
+                                                                        {q.question}
+                                                                    </p>
+                                                                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                                                                        {q.topic && q.topic !== "Unknown" && (
+                                                                            <span className="rounded-full bg-violet-100 dark:bg-violet-900/30 px-2.5 py-0.5 text-[11px] font-semibold text-violet-700 dark:text-violet-300">
+                                                                                {q.topic}
+                                                                            </span>
+                                                                        )}
+                                                                        {q.difficulty && q.difficulty !== "Unknown" && (
+                                                                            <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${getDifficultyColor(q.difficulty)}`}>
+                                                                                {q.difficulty}
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
+
+                                            {/* Summary footer */}
+                                            <div className="mt-4 pt-4 border-t border-violet-200/40 dark:border-indigo-700/30 flex items-center justify-between">
+                                                <p className="text-xs text-muted-foreground">
+                                                    {mlQuestions.totalQuestions} total questions found across {mlQuestions.results.filter(r => r.matchedCount > 0).length} matching skills
+                                                </p>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={handleFetchMLQuestions}
+                                                    disabled={mlQuestionsLoading}
+                                                    className="gap-1.5 border-violet-300 dark:border-indigo-700 text-violet-700 dark:text-indigo-300 hover:bg-violet-50 dark:hover:bg-indigo-900/30"
+                                                >
+                                                    <Sparkles className="w-3.5 h-3.5" />
+                                                    Refresh
+                                                </Button>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </motion.div>
+                            )}
 
                             <Card className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-sm">
                                 <CardHeader>
