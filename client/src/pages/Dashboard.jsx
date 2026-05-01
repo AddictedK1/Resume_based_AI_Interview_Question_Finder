@@ -305,7 +305,7 @@ export default function Dashboard() {
         targetDomain: targetDomain.trim(),
         sourceFileName: resumeFileName,
         resumeSkills: extractedSkills,
-        questionCount: 5,
+        questionCount: 10,
     });
 
     // ── Fetch ML Dataset Questions by skills ──

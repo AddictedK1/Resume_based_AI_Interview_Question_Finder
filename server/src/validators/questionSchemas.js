@@ -48,7 +48,7 @@ export const generateQuestionsSchema = z.object({
         .max(20)
         .optional()
         .default([]),
-    questionCount: z.coerce.number().int().min(3).max(10).optional().default(5),
+    questionCount: z.coerce.number().int().min(10).max(50).optional().default(10),
     forceNew: z.coerce.boolean().optional().default(false),
 });
 

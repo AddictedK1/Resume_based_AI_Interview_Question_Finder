@@ -219,9 +219,9 @@ export default function SessionSidebar({
                         return (
                             <div
                                 key={session._id}
+                                onClick={() => onSelectSession(session._id)}
                                 role="button"
                                 tabIndex={0}
-                                onClick={() => onSelectSession(session._id)}
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter" || e.key === " ") {
                                         e.preventDefault();
@@ -229,7 +229,7 @@ export default function SessionSidebar({
                                     }
                                 }}
                                 aria-current={isActive ? "true" : undefined}
-                                className={`group w-full rounded-2xl border p-4 text-left shadow-sm transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/40 ${
+                                className={`group w-full rounded-2xl border p-4 text-left shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer ${
                                     isActive
                                         ? "border-primary/30 bg-gradient-to-br from-primary/10 to-white shadow-md shadow-primary/5 dark:from-primary/15 dark:to-slate-900"
                                         : "border-border/60 bg-white/75 hover:-translate-y-[1px] hover:border-primary/25 hover:bg-white dark:border-slate-800 dark:bg-slate-900/70 dark:hover:bg-slate-900"
