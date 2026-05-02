@@ -95,6 +95,18 @@ export const useSession = () => {
         }
     }, []);
 
+    const addSession = useCallback((session) => {
+        setSessions((prev) =>
+            sortSessionsByRecentActivity([
+                session,
+                ...prev.filter((s) => s._id !== session._id),
+            ]),
+        );
+
+        setActiveSessionId(session._id);
+        sessionStorage.setItem("activeSessionId", session._id);
+    }, []);
+
     const deleteSession = useCallback(
         async (sessionId) => {
             try {
@@ -216,6 +228,7 @@ export const useSession = () => {
         switchSession,
         deleteSession,
         renameSession,
+        addSession,
         getSessionQuestionIndex,
         setSessionQuestionIndex,
         clearSessionStorage,
