@@ -64,13 +64,15 @@ export default function Dashboard() {
         seenInInterview: "no",
     });
 
-    // ── ML Dataset Questions state ──
+    // ── ML Pipeline Questions state ──
     const [mlQuestions, setMlQuestions] = useState(null);
     const [mlQuestionsLoading, setMlQuestionsLoading] = useState(false);
     const [mlQuestionsError, setMlQuestionsError] = useState("");
     const [expandedSkills, setExpandedSkills] = useState({});
     const [selectedMlQuestion, setSelectedMlQuestion] = useState(null);
     const [returnedQuestionIds, setReturnedQuestionIds] = useState(new Set());
+    const [mlSessionId, setMlSessionId] = useState(null);
+    const [resumeFileRef, setResumeFileRef] = useState(null);
 
     // Multi-session support
     const {
@@ -268,6 +270,7 @@ export default function Dashboard() {
             setResumeSuccess(data.message || "Resume analyzed successfully.");
             setIsUploading(false);
             setResumeLoaded(true);
+            setResumeFileRef(file);
         } catch (error) {
             if (handleAuthFailure(error)) return;
             setIsUploading(false);
@@ -311,40 +314,74 @@ export default function Dashboard() {
         questionCount: 10,
     });
 
-    // ── Fetch ML Dataset Questions by skills ──
+    // ── Run full ML Pipeline (FAISS search) ──
     const handleFetchMLQuestions = async () => {
-        if (!extractedSkills.length) return;
+        if (!resumeFileRef && !resumeLoaded) return;
 
         setMlQuestionsLoading(true);
         setMlQuestionsError("");
         setMlQuestions(null);
         setReturnedQuestionIds(new Set());
+        setMlSessionId(null);
 
         try {
-            const response = await authFetch("/ml/questions-by-skills", {
+            const formData = new FormData();
+            if (resumeFileRef) {
+                formData.append("resume", resumeFileRef);
+            }
+
+            const response = await authFetch("/ml/process-resume", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    skills: extractedSkills,
-                    maxPerSkill: 5,
-                }),
+                body: formData,
             });
 
             const data = await response.json().catch(() => ({}));
 
             if (!response.ok) {
                 throw new Error(
-                    data.error ||
-                        data.message ||
-                        "Could not fetch ML questions",
+                    data.error || data.message || "ML pipeline failed",
                 );
             }
 
-            setMlQuestions(data);
+            // Group questions by topic for display
+            const grouped = {};
+            (data.questions || []).forEach((q) => {
+                const topic = q.topic || "General";
+                if (!grouped[topic]) grouped[topic] = [];
+                grouped[topic].push(q);
+            });
+
+            const results = Object.entries(grouped).map(([topic, qs]) => ({
+                skill: topic,
+                matchedCount: qs.length,
+                questions: qs,
+            }));
+
+            setMlQuestions({
+                message: data.message || `Found ${data.totalQuestions} questions`,
+                totalQuestions: data.totalQuestions || 0,
+                results,
+                skills: data.skills || {},
+                processingTimeMs: data.processingTimeMs || 0,
+                sessionId: data.sessionId,
+            });
+            setMlSessionId(data.sessionId);
+
+            // Update extracted skills from ML pipeline if available
+            if (data.skills?.raw?.length) {
+                setExtractedSkills(data.skills.raw);
+            }
+
+            // Auto-expand topics that have matches
+            const expanded = {};
+            results.forEach((r) => {
+                if (r.matchedCount > 0) expanded[r.skill] = true;
+            });
+            setExpandedSkills(expanded);
 
             // Track all returned questions to avoid duplicates on "Generate More"
             const allQuestionIds = new Set();
-            (data.results || []).forEach((skillGroup) => {
+            results.forEach((skillGroup) => {
                 (skillGroup.questions || []).forEach((q) => {
                     allQuestionIds.add(q.question);
                 });
@@ -352,9 +389,9 @@ export default function Dashboard() {
             setReturnedQuestionIds(allQuestionIds);
 
             // Save questions to session: if activeSession present, append; otherwise create new session
-            if (data.results) {
+            if (results.length > 0) {
                 const flattenedQuestions = [];
-                (data.results || []).forEach((skillGroup) => {
+                results.forEach((skillGroup) => {
                     (skillGroup.questions || []).forEach((q) => {
                         flattenedQuestions.push({
                             question: q.question,
@@ -421,7 +458,7 @@ export default function Dashboard() {
         } catch (error) {
             if (handleAuthFailure(error)) return;
             setMlQuestionsError(
-                error.message || "Could not fetch ML questions",
+                error.message || "ML pipeline failed",
             );
         } finally {
             setMlQuestionsLoading(false);
@@ -834,6 +871,8 @@ export default function Dashboard() {
                                                     setResumeError("");
                                                     setMlQuestions(null);
                                                     setMlQuestionsError("");
+                                                    setMlSessionId(null);
+                                                    setResumeFileRef(null);
                                                 }}
                                             >
                                                 Remove
@@ -873,41 +912,31 @@ export default function Dashboard() {
                                             </div>
                                         )}
 
-                                    {/* ── Fetch ML Questions Button ── */}
-                                    {resumeLoaded &&
-                                        extractedSkills.length > 0 && (
-                                            <div className="mt-6 pt-4 border-t border-border/40 dark:border-slate-700/40">
-                                                <Button
-                                                    className="w-full h-12 rounded-xl gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg shadow-violet-500/25 transition-all duration-300"
-                                                    onClick={
-                                                        handleFetchMLQuestions
-                                                    }
-                                                    disabled={
-                                                        mlQuestionsLoading
-                                                    }
-                                                >
-                                                    {mlQuestionsLoading ? (
-                                                        <>
-                                                            <Loader2 className="w-5 h-5 animate-spin" />
-                                                            Fetching Questions
-                                                            from Dataset...
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <Sparkles className="w-5 h-5" />
-                                                            Fetch Interview
-                                                            Questions from
-                                                            Dataset
-                                                        </>
-                                                    )}
-                                                </Button>
-                                                <p className="mt-2 text-xs text-center text-muted-foreground">
-                                                    Uses your extracted skills
-                                                    to find matching questions
-                                                    from the ML dataset
-                                                </p>
-                                            </div>
-                                        )}
+                                    {/* ── Run ML Pipeline Button ── */}
+                                    {resumeLoaded && extractedSkills.length > 0 && (
+                                        <div className="mt-6 pt-4 border-t border-border/40 dark:border-slate-700/40">
+                                            <Button
+                                                className="w-full h-12 rounded-xl gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg shadow-violet-500/25 transition-all duration-300"
+                                                onClick={handleFetchMLQuestions}
+                                                disabled={mlQuestionsLoading}
+                                            >
+                                                {mlQuestionsLoading ? (
+                                                    <>
+                                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                                        Running ML Pipeline...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Sparkles className="w-5 h-5" />
+                                                        Run ML Pipeline & Find Questions
+                                                    </>
+                                                )}
+                                            </Button>
+                                            <p className="mt-2 text-xs text-center text-muted-foreground">
+                                                Runs FAISS semantic search on your resume to find the most relevant interview questions
+                                            </p>
+                                        </div>
+                                    )}
 
                                     {mlQuestionsError && (
                                         <p className="mt-3 text-sm text-red-600">
@@ -1070,12 +1099,14 @@ export default function Dashboard() {
                                                     <BookOpen className="w-5 h-5 text-white" />
                                                 </div>
                                                 <CardTitle className="text-2xl bg-gradient-to-r from-violet-700 to-indigo-600 dark:from-violet-400 dark:to-indigo-400 bg-clip-text text-transparent">
-                                                    Dataset Interview Questions
+                                                    ML Pipeline — Interview Questions
                                                 </CardTitle>
                                             </div>
                                             <CardDescription className="mt-2">
-                                                {mlQuestions.message} — matched
-                                                from your resume skills
+                                                {mlQuestions.message}
+                                                {mlQuestions.processingTimeMs > 0 && (
+                                                    <span className="ml-1 text-xs opacity-70">({mlQuestions.processingTimeMs}ms)</span>
+                                                )}
                                             </CardDescription>
                                         </CardHeader>
                                         <CardContent className="space-y-4">
@@ -1111,27 +1142,27 @@ export default function Dashboard() {
                                                                             q.question
                                                                         }
                                                                     </p>
-                                                                    <div className="flex flex-wrap items-center gap-2">
-                                                                        {q.topic &&
-                                                                            q.topic !==
-                                                                                "Unknown" && (
-                                                                                <span className="rounded-full bg-violet-100 dark:bg-violet-900/30 px-2.5 py-0.5 text-[11px] font-semibold text-violet-700 dark:text-violet-300">
-                                                                                    {
-                                                                                        q.topic
-                                                                                    }
-                                                                                </span>
-                                                                            )}
-                                                                        {q.difficulty &&
-                                                                            q.difficulty !==
-                                                                                "Unknown" && (
-                                                                                <span
-                                                                                    className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${getDifficultyColor(q.difficulty)}`}
-                                                                                >
-                                                                                    {
-                                                                                        q.difficulty
-                                                                                    }
-                                                                                </span>
-                                                                            )}
+                                                                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                                                                        {q.topic && q.topic !== "Unknown" && (
+                                                                            <span className="rounded-full bg-violet-100 dark:bg-violet-900/30 px-2.5 py-0.5 text-[11px] font-semibold text-violet-700 dark:text-violet-300">
+                                                                                {q.topic}
+                                                                            </span>
+                                                                        )}
+                                                                        {q.difficulty && q.difficulty !== "Unknown" && (
+                                                                            <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${getDifficultyColor(q.difficulty)}`}>
+                                                                                {q.difficulty}
+                                                                            </span>
+                                                                        )}
+                                                                        {(q.final_score || q.score) > 0 && (
+                                                                            <span className="rounded-full bg-sky-100 dark:bg-sky-900/30 px-2.5 py-0.5 text-[11px] font-semibold text-sky-700 dark:text-sky-300">
+                                                                                Score: {((q.final_score || q.score) * 100).toFixed(0)}%
+                                                                            </span>
+                                                                        )}
+                                                                        {(q.tags || []).filter(t => t).map((tag, ti) => (
+                                                                            <span key={ti} className="rounded-full bg-slate-100 dark:bg-slate-700/40 px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:text-slate-400">
+                                                                                #{tag}
+                                                                            </span>
+                                                                        ))}
                                                                     </div>
                                                                 </button>
                                                             ),

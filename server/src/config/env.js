@@ -27,6 +27,7 @@ const envSchema = z.object({
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
   EMAIL_FROM: z.string().optional(),
+  ML_API_URL: z.string().url().optional().default("http://localhost:5001"),
 });
 
 const parsed = envSchema.safeParse(process.env);
