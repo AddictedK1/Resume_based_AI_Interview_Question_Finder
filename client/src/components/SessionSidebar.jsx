@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Clock3, Edit2, Sparkles, Target, Trash2 } from "lucide-react";
+import { Clock3, Edit2, Sparkles, Target, Trash2, Plus } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import SessionDeleteConfirmModal from "./SessionDeleteConfirmModal";
 import SessionRenameModal from "./SessionRenameModal";
 
@@ -12,6 +13,7 @@ export default function SessionSidebar({
     onSelectSession = () => {},
     onDeleteSession = () => {},
     onRenameSession = () => {},
+    onAddSession = () => {},
     isLoading = false,
 }) {
     const [sessionToDelete, setSessionToDelete] = useState(null);
@@ -142,6 +144,12 @@ export default function SessionSidebar({
                                 Upload a resume and generate questions to start
                                 a practice track.
                             </p>
+                            <div className="mt-4">
+                                <Button size="sm" onClick={onAddSession}>
+                                    <Plus className="w-4 h-4 mr-2 inline" /> Add
+                                    Session
+                                </Button>
+                            </div>
                         </div>
                     </CardContent>
                 </Card>
@@ -165,6 +173,15 @@ export default function SessionSidebar({
                         <div className="rounded-full border border-border/70 bg-white px-3 py-1 text-xs font-semibold text-muted-foreground shadow-sm dark:border-slate-800 dark:bg-slate-900">
                             {sessions.length}
                         </div>
+                    </div>
+                    <div className="mt-3 flex items-center justify-end">
+                        <Button
+                            size="sm"
+                            onClick={onAddSession}
+                            className="inline-flex items-center gap-2"
+                        >
+                            <Plus className="w-4 h-4" /> Add Session
+                        </Button>
                     </div>
 
                     {currentSession && (

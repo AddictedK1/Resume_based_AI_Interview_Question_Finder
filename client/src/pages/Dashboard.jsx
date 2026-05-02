@@ -69,6 +69,8 @@ export default function Dashboard() {
     const [mlQuestionsLoading, setMlQuestionsLoading] = useState(false);
     const [mlQuestionsError, setMlQuestionsError] = useState("");
     const [expandedSkills, setExpandedSkills] = useState({});
+    const [selectedMlQuestion, setSelectedMlQuestion] = useState(null);
+    const [returnedQuestionIds, setReturnedQuestionIds] = useState(new Set());
     const [mlSessionId, setMlSessionId] = useState(null);
     const [resumeFileRef, setResumeFileRef] = useState(null);
 
@@ -81,6 +83,7 @@ export default function Dashboard() {
         switchSession,
         deleteSession,
         renameSession,
+        addSession,
         getSessionQuestionIndex,
         setSessionQuestionIndex,
         clearSessionStorage,
@@ -318,6 +321,7 @@ export default function Dashboard() {
         setMlQuestionsLoading(true);
         setMlQuestionsError("");
         setMlQuestions(null);
+        setReturnedQuestionIds(new Set());
         setMlSessionId(null);
 
         try {
@@ -374,10 +378,209 @@ export default function Dashboard() {
                 if (r.matchedCount > 0) expanded[r.skill] = true;
             });
             setExpandedSkills(expanded);
+
+            // Track all returned questions to avoid duplicates on "Generate More"
+            const allQuestionIds = new Set();
+            results.forEach((skillGroup) => {
+                (skillGroup.questions || []).forEach((q) => {
+                    allQuestionIds.add(q.question);
+                });
+            });
+            setReturnedQuestionIds(allQuestionIds);
+
+            // Save questions to session: if activeSession present, append; otherwise create new session
+            if (results.length > 0) {
+                const flattenedQuestions = [];
+                results.forEach((skillGroup) => {
+                    (skillGroup.questions || []).forEach((q) => {
+                        flattenedQuestions.push({
+                            question: q.question,
+                            topic: q.topic || "Unknown",
+                            difficulty: q.difficulty || "Unknown",
+                        });
+                    });
+                });
+
+                if (flattenedQuestions.length > 0) {
+                    try {
+                        if (activeSessionId) {
+                            await authFetch("/ml/save-questions-to-session", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    sessionId: activeSessionId,
+                                    questions: flattenedQuestions,
+                                }),
+                            });
+                        } else {
+                            // Create a new session on server and add to UI
+                            const createResp = await authFetch(
+                                "/ml/create-session",
+                                {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                    },
+                                    body: JSON.stringify({
+                                        targetRole: targetRole,
+                                        targetCompany: targetCompany,
+                                        targetLevel: targetLevel,
+                                        targetDomain: targetDomain,
+                                        sourceFileName: resumeFileName,
+                                        resumeSkills: extractedSkills,
+                                        mlQuestions: flattenedQuestions,
+                                    }),
+                                },
+                            );
+
+                            if (createResp.ok) {
+                                const createData = await createResp
+                                    .json()
+                                    .catch(() => ({}));
+                                if (createData?.session) {
+                                    addSession(createData.session);
+                                }
+                            } else {
+                                // If creation failed, log but continue
+                                console.warn(
+                                    "Failed to create session on server",
+                                );
+                            }
+                        }
+                    } catch (saveError) {
+                        console.warn(
+                            "Could not save questions to session:",
+                            saveError,
+                        );
+                    }
+                }
+            }
         } catch (error) {
             if (handleAuthFailure(error)) return;
             setMlQuestionsError(
                 error.message || "ML pipeline failed",
+            );
+        } finally {
+            setMlQuestionsLoading(false);
+        }
+    };
+
+    // ── Generate More Questions (avoiding duplicates) ──
+    const handleGenerateMoreQuestions = async () => {
+        if (!extractedSkills.length) return;
+
+        setMlQuestionsLoading(true);
+        setMlQuestionsError("");
+
+        try {
+            const response = await authFetch("/ml/questions-by-skills", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    skills: extractedSkills,
+                    maxPerSkill: 5,
+                }),
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(
+                    data.error ||
+                        data.message ||
+                        "Could not fetch more questions",
+                );
+            }
+
+            // Filter out duplicate questions
+            const newResults = (data.results || []).map((skillGroup) => ({
+                ...skillGroup,
+                questions: (skillGroup.questions || []).filter(
+                    (q) => !returnedQuestionIds.has(q.question),
+                ),
+            }));
+
+            // Merge with existing questions
+            const mergedResults = (mlQuestions?.results || []).map(
+                (existing) => {
+                    const newSkillData = newResults.find(
+                        (n) => n.skill === existing.skill,
+                    );
+                    if (newSkillData) {
+                        return {
+                            ...existing,
+                            questions: [
+                                ...existing.questions,
+                                ...newSkillData.questions,
+                            ],
+                            matchedCount:
+                                existing.matchedCount +
+                                newSkillData.matchedCount,
+                        };
+                    }
+                    return existing;
+                },
+            );
+
+            // Add new skills that didn't exist before
+            newResults.forEach((newSkill) => {
+                if (!mergedResults.find((m) => m.skill === newSkill.skill)) {
+                    mergedResults.push(newSkill);
+                }
+            });
+
+            // Update state
+            setMlQuestions({
+                ...data,
+                results: mergedResults,
+                totalQuestions:
+                    (mlQuestions?.totalQuestions || 0) + data.totalQuestions,
+            });
+
+            // Update returned question IDs
+            const updatedIds = new Set(returnedQuestionIds);
+            mergedResults.forEach((skillGroup) => {
+                (skillGroup.questions || []).forEach((q) => {
+                    updatedIds.add(q.question);
+                });
+            });
+            setReturnedQuestionIds(updatedIds);
+
+            // Save new questions to session if sessionId exists
+            if (activeSessionId && newResults) {
+                const flattenedNewQuestions = [];
+                newResults.forEach((skillGroup) => {
+                    (skillGroup.questions || []).forEach((q) => {
+                        flattenedNewQuestions.push({
+                            question: q.question,
+                            topic: q.topic || "Unknown",
+                            difficulty: q.difficulty || "Unknown",
+                        });
+                    });
+                });
+
+                if (flattenedNewQuestions.length > 0) {
+                    try {
+                        await authFetch("/ml/save-questions-to-session", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                sessionId: activeSessionId,
+                                questions: flattenedNewQuestions,
+                            }),
+                        });
+                    } catch (saveError) {
+                        console.warn(
+                            "Could not save new questions to session:",
+                            saveError,
+                        );
+                    }
+                }
+            }
+        } catch (error) {
+            if (handleAuthFailure(error)) return;
+            setMlQuestionsError(
+                error.message || "Could not generate more questions",
             );
         } finally {
             setMlQuestionsLoading(false);
@@ -390,9 +593,12 @@ export default function Dashboard() {
 
     const getDifficultyColor = (difficulty) => {
         const d = (difficulty || "").toLowerCase();
-        if (d === "easy") return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200";
-        if (d === "medium") return "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200";
-        if (d === "hard") return "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200";
+        if (d === "easy")
+            return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200";
+        if (d === "medium")
+            return "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200";
+        if (d === "hard")
+            return "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200";
         return "bg-slate-100 text-slate-700 dark:bg-slate-700/40 dark:text-slate-300";
     };
 
@@ -458,7 +664,10 @@ export default function Dashboard() {
     const handlePracticeSubmit = async (event) => {
         event.preventDefault();
 
-        if (!currentQuestion) {
+        // Use selectedMlQuestion if available, otherwise use currentQuestion
+        const questionToUse = selectedMlQuestion || currentQuestion;
+
+        if (!questionToUse) {
             setSubmissionError("Select a question before asking for feedback.");
             return;
         }
@@ -467,13 +676,17 @@ export default function Dashboard() {
         setSubmissionError("");
 
         try {
+            const questionText = selectedMlQuestion
+                ? selectedMlQuestion.question
+                : currentQuestion.questionText;
+
             const response = await authFetch("/questions/practice", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    questionText: currentQuestion.questionText,
+                    questionText: questionText,
                     answerText: practiceAnswer.trim(),
                     generationSessionId: activeSessionId || null,
                 }),
@@ -482,15 +695,43 @@ export default function Dashboard() {
             const data = await response.json().catch(() => ({}));
 
             if (!response.ok) {
-                throw new Error(data.message || "Could not analyze your answer");
+                throw new Error(
+                    data.message || "Could not analyze your answer",
+                );
             }
 
             setPracticeFeedback(data.attempt);
         } catch (error) {
             if (handleAuthFailure(error)) return;
-            setSubmissionError(error.message || "Could not analyze your answer");
+            setSubmissionError(
+                error.message || "Could not analyze your answer",
+            );
         } finally {
             setPracticeLoading(false);
+        }
+    };
+
+    const handleAddSession = async () => {
+        try {
+            const resp = await authFetch("/questions/create", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    sourceFileName: resumeFileName,
+                    resumeSkills: extractedSkills,
+                }),
+            });
+
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok)
+                throw new Error(data.message || "Could not create session");
+
+            if (data.session) {
+                addSession(data.session);
+            }
+        } catch (error) {
+            if (handleAuthFailure(error)) return;
+            console.error("Could not create session:", error);
         }
     };
 
@@ -543,6 +784,7 @@ export default function Dashboard() {
                     onSelectSession={handleSelectHistorySession}
                     onDeleteSession={deleteSession}
                     onRenameSession={renameSession}
+                    onAddSession={handleAddSession}
                     isLoading={isLoadingSessions}
                 />
 
@@ -704,541 +946,144 @@ export default function Dashboard() {
                                 </CardContent>
                             </Card>
 
-                            <motion.div
-                                initial="hidden"
-                                animate="visible"
-                                variants={getFadeUpWithDelay(0.1)}
-                            >
-                                <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-border/50 dark:border-slate-700/50 shadow-md">
-                                    <CardHeader className="text-center">
-                                        <CardTitle className="text-2xl">
-                                            Predicted Questions
-                                        </CardTitle>
-                                        <CardDescription>
-                                            Generate a saved question set from
-                                            your resume skills, then practice
-                                            your answer below.
-                                        </CardDescription>
-                                        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                                            <Input
-                                                value={targetRole}
-                                                onChange={(event) =>
-                                                    setTargetRole(
-                                                        event.target.value,
-                                                    )
-                                                }
-                                                placeholder="Target role, e.g. Senior Frontend Engineer"
-                                            />
-                                            <Input
-                                                value={targetCompany}
-                                                onChange={(event) =>
-                                                    setTargetCompany(
-                                                        event.target.value,
-                                                    )
-                                                }
-                                                placeholder="Target company, e.g. Google"
-                                            />
-                                            <select
-                                                className="h-10 rounded-md border border-input bg-background px-3 text-sm"
-                                                value={targetLevel}
-                                                onChange={(event) =>
-                                                    setTargetLevel(
-                                                        event.target.value,
-                                                    )
-                                                }
+                            <div className="space-y-4">
+                                {/* Answer Practice Section - Connected to ML Questions */}
+                                {selectedMlQuestion ? (
+                                    <Card className="border-border/60 bg-background/70">
+                                        <CardHeader className="pb-3">
+                                            <CardTitle className="text-lg">
+                                                Answer Practice
+                                            </CardTitle>
+                                            <CardDescription>
+                                                Answer the selected question
+                                                from your dataset
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="space-y-3">
+                                            <div className="rounded-xl bg-muted/40 p-3 text-sm text-foreground">
+                                                {selectedMlQuestion.question}
+                                            </div>
+                                            <form
+                                                onSubmit={handlePracticeSubmit}
+                                                className="space-y-3"
                                             >
-                                                <option value="intern">
-                                                    Intern
-                                                </option>
-                                                <option value="junior">
-                                                    Junior
-                                                </option>
-                                                <option value="mid">Mid</option>
-                                                <option value="senior">
-                                                    Senior
-                                                </option>
-                                                <option value="lead">
-                                                    Lead
-                                                </option>
-                                            </select>
-                                            <Input
-                                                value={targetDomain}
-                                                onChange={(event) =>
-                                                    setTargetDomain(
-                                                        event.target.value,
-                                                    )
-                                                }
-                                                placeholder="Domain, e.g. fintech"
-                                            />
-                                        </div>
-                                        <div className="mt-3 flex justify-center">
-                                            <Button
-                                                className="h-11 rounded-lg sm:w-72"
-                                                disabled={
-                                                    !resumeLoaded ||
-                                                    isGenerating
-                                                }
-                                                onClick={() =>
-                                                    handleGenerate()
-                                                }
-                                            >
-                                                {isGenerating ? (
-                                                    <>
-                                                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />{" "}
-                                                        Generating...
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <PlayCircle className="w-5 h-5 mr-2" />{" "}
-                                                        Generate Questions
-                                                    </>
-                                                )}
-                                            </Button>
-                                        </div>
-                                    </CardHeader>
+                                                <textarea
+                                                    className="min-h-[160px] w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                                    placeholder="Write your answer here..."
+                                                    value={practiceAnswer}
+                                                    onChange={(event) =>
+                                                        setPracticeAnswer(
+                                                            event.target.value,
+                                                        )
+                                                    }
+                                                    disabled={practiceLoading}
+                                                />
+                                                <Button
+                                                    type="submit"
+                                                    className="w-full"
+                                                    disabled={practiceLoading}
+                                                >
+                                                    {practiceLoading ? (
+                                                        <>
+                                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />{" "}
+                                                            Reviewing...
+                                                        </>
+                                                    ) : (
+                                                        "Get Feedback"
+                                                    )}
+                                                </Button>
+                                            </form>
+                                        </CardContent>
+                                    </Card>
+                                ) : (
+                                    <Card className="border-border/60 bg-background/70">
+                                        <CardHeader className="pb-3">
+                                            <CardTitle className="text-lg">
+                                                Answer Practice
+                                            </CardTitle>
+                                            <CardDescription>
+                                                Select a question from the
+                                                dataset below to practice
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="text-center text-sm text-muted-foreground py-6">
+                                            No question selected. Click on a
+                                            question below to start practicing.
+                                        </CardContent>
+                                    </Card>
+                                )}
 
-                                    <CardContent className="space-y-6">
-                                        <Card className="border-border/60 bg-background/70">
-                                            <CardHeader className="pb-3">
-                                                <CardTitle className="text-lg">
-                                                    Skill-Gap Insights
-                                                </CardTitle>
-                                                <CardDescription>
-                                                    Missing skills are inferred
-                                                    from your role filters vs
-                                                    resume skills.
-                                                </CardDescription>
-                                            </CardHeader>
-                                            <CardContent className="space-y-4">
-                                                {activeSession?.skillGap ? (
-                                                    <>
-                                                        <div>
-                                                            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                                                                Matched skills
-                                                            </p>
-                                                            <div className="mt-2 flex flex-wrap gap-2">
-                                                                {(
-                                                                    activeSession
-                                                                        .skillGap
-                                                                        .matchedSkills ||
-                                                                    []
-                                                                ).length ===
-                                                                0 ? (
-                                                                    <p className="text-sm text-muted-foreground">
-                                                                        No
-                                                                        direct
-                                                                        matches
-                                                                        yet.
-                                                                    </p>
-                                                                ) : (
-                                                                    activeSession.skillGap.matchedSkills.map(
-                                                                        (
-                                                                            skill,
-                                                                        ) => (
-                                                                            <span
-                                                                                key={
-                                                                                    skill
-                                                                                }
-                                                                                className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-800 dark:bg-green-900/40 dark:text-green-200"
-                                                                            >
-                                                                                {
-                                                                                    skill
-                                                                                }
-                                                                            </span>
-                                                                        ),
-                                                                    )
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                                                                Missing skills
-                                                            </p>
-                                                            <div className="mt-2 flex flex-wrap gap-2">
-                                                                {(
-                                                                    activeSession
-                                                                        .skillGap
-                                                                        .missingSkills ||
-                                                                    []
-                                                                ).length ===
-                                                                0 ? (
-                                                                    <p className="text-sm text-muted-foreground">
-                                                                        Great
-                                                                        coverage
-                                                                        for this
-                                                                        target
-                                                                        profile.
-                                                                    </p>
-                                                                ) : (
-                                                                    activeSession.skillGap.missingSkills.map(
-                                                                        (
-                                                                            skill,
-                                                                        ) => (
-                                                                            <span
-                                                                                key={
-                                                                                    skill
-                                                                                }
-                                                                                className="rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-900 dark:bg-amber-900/40 dark:text-amber-100"
-                                                                            >
-                                                                                {
-                                                                                    skill
-                                                                                }
-                                                                            </span>
-                                                                        ),
-                                                                    )
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                                                                Prioritized
-                                                                learning plan
-                                                            </p>
-                                                            <ul className="mt-2 space-y-1 text-sm text-foreground">
-                                                                {(
-                                                                    activeSession
-                                                                        .skillGap
-                                                                        .prioritizedLearningPlan ||
-                                                                    []
-                                                                ).map(
-                                                                    (step) => (
-                                                                        <li
-                                                                            key={
-                                                                                step
-                                                                            }
-                                                                        >
-                                                                            •{" "}
-                                                                            {
-                                                                                step
-                                                                            }
-                                                                        </li>
-                                                                    ),
-                                                                )}
-                                                            </ul>
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <p className="text-sm text-muted-foreground">
-                                                        Generate questions to
-                                                        see skill-gap insights
-                                                        and learning priorities.
-                                                    </p>
-                                                )}
-                                            </CardContent>
-                                        </Card>
-
-                                        <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,0.8fr)]">
-                                            <div className="space-y-4">
-                                                {activeSession
-                                                    ?.generatedQuestions
-                                                    ?.length ? (
-                                                    <>
-                                                        <div className="space-y-3">
-                                                            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                                                                Question{" "}
-                                                                {currentQuestionIndex +
-                                                                    1}{" "}
-                                                                of{" "}
-                                                                {
-                                                                    activeSession
-                                                                        .generatedQuestions
-                                                                        .length
-                                                                }
-                                                            </p>
-                                                            {activeSession.generatedQuestions.map(
-                                                                (
-                                                                    question,
-                                                                    index,
-                                                                ) => (
-                                                                    <button
-                                                                        key={`${question.questionText}-${index}`}
-                                                                        type="button"
-                                                                        onClick={() => {
-                                                                            setSessionQuestionIndex(
-                                                                                index,
-                                                                            );
-                                                                            setPracticeAnswer(
-                                                                                "",
-                                                                            );
-                                                                            setPracticeFeedback(
-                                                                                null,
-                                                                            );
-                                                                        }}
-                                                                        className={`w-full rounded-2xl border p-4 text-left transition ${
-                                                                            index ===
-                                                                            currentQuestionIndex
-                                                                                ? "border-primary bg-primary/5"
-                                                                                : "border-border/60 bg-background hover:bg-muted/30"
-                                                                        }`}
-                                                                    >
-                                                                        <div className="mb-2 flex flex-wrap gap-2">
-                                                                            {question.tags?.map(
-                                                                                (
-                                                                                    tag,
-                                                                                ) => (
-                                                                                    <span
-                                                                                        key={
-                                                                                            tag
-                                                                                        }
-                                                                                        className="rounded-full bg-primary/10 px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-primary"
-                                                                                    >
-                                                                                        {
-                                                                                            tag
-                                                                                        }
-                                                                                    </span>
-                                                                                ),
-                                                                            )}
-                                                                        </div>
-                                                                        <p className="text-sm font-medium leading-relaxed text-foreground">
-                                                                            {
-                                                                                question.questionText
-                                                                            }
-                                                                        </p>
-                                                                        {question.focusSkill && (
-                                                                            <p className="mt-2 text-xs text-muted-foreground">
-                                                                                Focus
-                                                                                skill:{" "}
-                                                                                {
-                                                                                    question.focusSkill
-                                                                                }
-                                                                            </p>
-                                                                        )}
-                                                                    </button>
-                                                                ),
-                                                            )}
-                                                        </div>
-
-                                                        {/* Question Navigation */}
-                                                        <div className="flex gap-2 justify-between pt-2">
-                                                            <Button
-                                                                variant="outline"
-                                                                size="sm"
-                                                                disabled={
-                                                                    currentQuestionIndex ===
-                                                                    0
-                                                                }
-                                                                onClick={() =>
-                                                                    handleNavigateQuestion(
-                                                                        "prev",
-                                                                    )
-                                                                }
-                                                            >
-                                                                Previous
-                                                            </Button>
-                                                            <span className="text-xs text-muted-foreground flex items-center">
-                                                                {currentQuestionIndex +
-                                                                    1}{" "}
-                                                                /{" "}
-                                                                {
-                                                                    activeSession
-                                                                        .generatedQuestions
-                                                                        .length
-                                                                }
-                                                            </span>
-                                                            <Button
-                                                                variant="outline"
-                                                                size="sm"
-                                                                disabled={
-                                                                    currentQuestionIndex ===
-                                                                    activeSession
-                                                                        .generatedQuestions
-                                                                        .length -
-                                                                        1
-                                                                }
-                                                                onClick={() =>
-                                                                    handleNavigateQuestion(
-                                                                        "next",
-                                                                    )
-                                                                }
-                                                            >
-                                                                Next
-                                                            </Button>
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <div className="rounded-2xl border border-dashed border-border/70 p-6 text-center text-sm text-muted-foreground">
-                                                        Upload your resume and
-                                                        generate a set of
-                                                        questions to save a
-                                                        session here.
+                                {practiceFeedback && (
+                                    <Card className="border-border/60 bg-background/70">
+                                        <CardHeader className="pb-3">
+                                            <CardTitle className="text-lg">
+                                                Feedback
+                                            </CardTitle>
+                                            <CardDescription>
+                                                {
+                                                    practiceFeedback.feedbackSummary
+                                                }
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="space-y-4">
+                                            <div className="grid grid-cols-2 gap-3 text-sm">
+                                                {Object.entries(
+                                                    practiceFeedback.rubricScore ||
+                                                        {},
+                                                ).map(([label, score]) => (
+                                                    <div
+                                                        key={label}
+                                                        className="rounded-xl border border-border/60 p-3"
+                                                    >
+                                                        <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                                                            {label}
+                                                        </p>
+                                                        <p className="mt-1 text-lg font-semibold text-foreground">
+                                                            {score}
+                                                            /10
+                                                        </p>
                                                     </div>
-                                                )}
+                                                ))}
                                             </div>
-
-                                            <div className="space-y-4">
-                                                <Card className="border-border/60 bg-background/70">
-                                                    <CardHeader className="pb-3">
-                                                        <CardTitle className="text-lg">
-                                                            Answer Practice
-                                                        </CardTitle>
-                                                        <CardDescription>
-                                                            {currentQuestion
-                                                                ? `Q${currentQuestionIndex + 1}: ${currentQuestion.focusSkill || "Practice"}`
-                                                                : "Select a question to practice"}
-                                                        </CardDescription>
-                                                    </CardHeader>
-                                                    <CardContent className="space-y-3">
-                                                        <div className="rounded-xl bg-muted/40 p-3 text-sm text-foreground">
-                                                            {currentQuestion?.questionText ||
-                                                                "No question selected yet."}
-                                                        </div>
-                                                        <form
-                                                            onSubmit={
-                                                                handlePracticeSubmit
-                                                            }
-                                                            className="space-y-3"
-                                                        >
-                                                            <textarea
-                                                                className="min-h-[160px] w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                                                                placeholder="Write your answer here..."
-                                                                value={
-                                                                    practiceAnswer
-                                                                }
-                                                                onChange={(
-                                                                    event,
-                                                                ) =>
-                                                                    setPracticeAnswer(
-                                                                        event
-                                                                            .target
-                                                                            .value,
-                                                                    )
-                                                                }
-                                                                disabled={
-                                                                    !currentQuestion ||
-                                                                    practiceLoading
-                                                                }
-                                                            />
-                                                            <Button
-                                                                type="submit"
-                                                                className="w-full"
-                                                                disabled={
-                                                                    !currentQuestion ||
-                                                                    practiceLoading
-                                                                }
-                                                            >
-                                                                {practiceLoading ? (
-                                                                    <>
-                                                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />{" "}
-                                                                        Reviewing...
-                                                                    </>
-                                                                ) : (
-                                                                    "Get Feedback"
-                                                                )}
-                                                            </Button>
-                                                        </form>
-                                                    </CardContent>
-                                                </Card>
-
-                                                {practiceFeedback && (
-                                                    <Card className="border-border/60 bg-background/70">
-                                                        <CardHeader className="pb-3">
-                                                            <CardTitle className="text-lg">
-                                                                Feedback
-                                                            </CardTitle>
-                                                            <CardDescription>
-                                                                {
-                                                                    practiceFeedback.feedbackSummary
-                                                                }
-                                                            </CardDescription>
-                                                        </CardHeader>
-                                                        <CardContent className="space-y-4">
-                                                            <div className="grid grid-cols-2 gap-3 text-sm">
-                                                                {Object.entries(
-                                                                    practiceFeedback.rubricScore ||
-                                                                        {},
-                                                                ).map(
-                                                                    ([
-                                                                        label,
-                                                                        score,
-                                                                    ]) => (
-                                                                        <div
-                                                                            key={
-                                                                                label
-                                                                            }
-                                                                            className="rounded-xl border border-border/60 p-3"
-                                                                        >
-                                                                            <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                                                                                {
-                                                                                    label
-                                                                                }
-                                                                            </p>
-                                                                            <p className="mt-1 text-lg font-semibold text-foreground">
-                                                                                {
-                                                                                    score
-                                                                                }
-                                                                                /10
-                                                                            </p>
-                                                                        </div>
-                                                                    ),
-                                                                )}
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                                                                    Strengths
-                                                                </p>
-                                                                <ul className="mt-2 space-y-1 text-sm text-foreground">
-                                                                    {(
-                                                                        practiceFeedback.strengths ||
-                                                                        []
-                                                                    ).map(
-                                                                        (
-                                                                            item,
-                                                                        ) => (
-                                                                            <li
-                                                                                key={
-                                                                                    item
-                                                                                }
-                                                                            >
-                                                                                •{" "}
-                                                                                {
-                                                                                    item
-                                                                                }
-                                                                            </li>
-                                                                        ),
-                                                                    )}
-                                                                </ul>
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                                                                    Improve next
-                                                                </p>
-                                                                <ul className="mt-2 space-y-1 text-sm text-foreground">
-                                                                    {(
-                                                                        practiceFeedback.improvements ||
-                                                                        []
-                                                                    ).map(
-                                                                        (
-                                                                            item,
-                                                                        ) => (
-                                                                            <li
-                                                                                key={
-                                                                                    item
-                                                                                }
-                                                                            >
-                                                                                •{" "}
-                                                                                {
-                                                                                    item
-                                                                                }
-                                                                            </li>
-                                                                        ),
-                                                                    )}
-                                                                </ul>
-                                                            </div>
-                                                            <p className="text-sm font-medium text-primary">
-                                                                Overall score:{" "}
-                                                                {
-                                                                    practiceFeedback.overallScore
-                                                                }
-                                                                /10
-                                                            </p>
-                                                        </CardContent>
-                                                    </Card>
-                                                )}
+                                            <div>
+                                                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                                    Strengths
+                                                </p>
+                                                <ul className="mt-2 space-y-1 text-sm text-foreground">
+                                                    {(
+                                                        practiceFeedback.strengths ||
+                                                        []
+                                                    ).map((item) => (
+                                                        <li key={item}>
+                                                            • {item}
+                                                        </li>
+                                                    ))}
+                                                </ul>
                                             </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            </motion.div>
+                                            <div>
+                                                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                                    Improve next
+                                                </p>
+                                                <ul className="mt-2 space-y-1 text-sm text-foreground">
+                                                    {(
+                                                        practiceFeedback.improvements ||
+                                                        []
+                                                    ).map((item) => (
+                                                        <li key={item}>
+                                                            • {item}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                            <p className="text-sm font-medium text-primary">
+                                                Overall score:{" "}
+                                                {practiceFeedback.overallScore}
+                                                /10
+                                            </p>
+                                        </CardContent>
+                                    </Card>
+                                )}
+                            </div>
 
                             {/* ── ML Dataset Questions Section ── */}
                             {mlQuestions && mlQuestions.results?.length > 0 && (
@@ -1265,45 +1110,37 @@ export default function Dashboard() {
                                             </CardDescription>
                                         </CardHeader>
                                         <CardContent className="space-y-4">
-                                            {mlQuestions.results.map((skillGroup) => (
-                                                <div
-                                                    key={skillGroup.skill}
-                                                    className="rounded-2xl border border-violet-200/60 dark:border-indigo-700/30 bg-white/70 dark:bg-slate-800/70 overflow-hidden transition-all duration-300"
-                                                >
-                                                    {/* Skill Header — clickable accordion */}
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => toggleSkillExpand(skillGroup.skill)}
-                                                        className="w-full flex items-center justify-between p-4 hover:bg-violet-50/60 dark:hover:bg-indigo-900/20 transition-colors"
-                                                    >
-                                                        <div className="flex items-center gap-3">
-                                                            <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 text-white text-xs font-bold shadow-sm">
-                                                                {skillGroup.matchedCount}
-                                                            </span>
-                                                            <span className="font-semibold text-foreground">
-                                                                {skillGroup.skill}
-                                                            </span>
-                                                            {skillGroup.matchedCount === 0 && (
-                                                                <span className="text-xs text-muted-foreground italic">No matches in dataset</span>
-                                                            )}
-                                                        </div>
-                                                        {expandedSkills[skillGroup.skill] ? (
-                                                            <ChevronUp className="w-5 h-5 text-muted-foreground" />
-                                                        ) : (
-                                                            <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                                                        )}
-                                                    </button>
-
-                                                    {/* Questions List */}
-                                                    {expandedSkills[skillGroup.skill] && skillGroup.questions.length > 0 && (
-                                                        <div className="border-t border-violet-100/60 dark:border-indigo-800/30 divide-y divide-violet-100/40 dark:divide-indigo-800/20">
-                                                            {skillGroup.questions.map((q, qIndex) => (
-                                                                <div
+                                            {/* Flat list of all questions */}
+                                            <div className="space-y-3">
+                                                {mlQuestions.results.flatMap(
+                                                    (skillGroup) =>
+                                                        skillGroup.questions.map(
+                                                            (q, qIndex) => (
+                                                                <button
+                                                                    type="button"
                                                                     key={`${skillGroup.skill}-${qIndex}`}
-                                                                    className="p-4 hover:bg-violet-50/40 dark:hover:bg-indigo-900/10 transition-colors"
+                                                                    onClick={() => {
+                                                                        setSelectedMlQuestion(
+                                                                            q,
+                                                                        );
+                                                                        setPracticeAnswer(
+                                                                            "",
+                                                                        );
+                                                                        setPracticeFeedback(
+                                                                            null,
+                                                                        );
+                                                                    }}
+                                                                    className={`w-full text-left rounded-lg border p-4 transition-all ${
+                                                                        selectedMlQuestion?.question ===
+                                                                        q.question
+                                                                            ? "border-violet-400 bg-violet-50/60 dark:bg-violet-900/20 shadow-md"
+                                                                            : "border-violet-200/60 dark:border-indigo-700/30 bg-white/70 dark:bg-slate-800/70 hover:bg-violet-50/40 dark:hover:bg-indigo-900/10"
+                                                                    }`}
                                                                 >
-                                                                    <p className="text-sm font-medium leading-relaxed text-foreground">
-                                                                        {q.question}
+                                                                    <p className="text-sm font-medium leading-relaxed text-foreground mb-3">
+                                                                        {
+                                                                            q.question
+                                                                        }
                                                                     </p>
                                                                     <div className="mt-2 flex flex-wrap items-center gap-2">
                                                                         {q.topic && q.topic !== "Unknown" && (
@@ -1327,27 +1164,31 @@ export default function Dashboard() {
                                                                             </span>
                                                                         ))}
                                                                     </div>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            ))}
+                                                                </button>
+                                                            ),
+                                                        ),
+                                                )}
+                                            </div>
 
                                             {/* Summary footer */}
-                                            <div className="mt-4 pt-4 border-t border-violet-200/40 dark:border-indigo-700/30 flex items-center justify-between">
+                                            <div className="mt-6 pt-4 border-t border-violet-200/40 dark:border-indigo-700/30 flex items-center justify-between">
                                                 <p className="text-xs text-muted-foreground">
-                                                    {mlQuestions.totalQuestions} total questions found across {mlQuestions.results.filter(r => r.matchedCount > 0).length} matching skills
+                                                    {mlQuestions.totalQuestions}{" "}
+                                                    total questions found
                                                 </p>
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
-                                                    onClick={handleFetchMLQuestions}
-                                                    disabled={mlQuestionsLoading}
+                                                    onClick={
+                                                        handleGenerateMoreQuestions
+                                                    }
+                                                    disabled={
+                                                        mlQuestionsLoading
+                                                    }
                                                     className="gap-1.5 border-violet-300 dark:border-indigo-700 text-violet-700 dark:text-indigo-300 hover:bg-violet-50 dark:hover:bg-indigo-900/30"
                                                 >
                                                     <Sparkles className="w-3.5 h-3.5" />
-                                                    Refresh
+                                                    Generate More
                                                 </Button>
                                             </div>
                                         </CardContent>

@@ -5,6 +5,7 @@ import {
     createSubmission,
     deleteSession,
     generateQuestions,
+    createSession,
     listQuestionHistory,
     listMySubmissions,
     practiceAnswerFeedback,
@@ -40,6 +41,7 @@ questionRouter.post(
     validate(generateQuestionsSchema),
     asyncHandler(generateQuestions),
 );
+questionRouter.post("/create", authenticate, asyncHandler(createSession));
 questionRouter.get("/history", authenticate, asyncHandler(listQuestionHistory));
 questionRouter.post(
     "/practice",

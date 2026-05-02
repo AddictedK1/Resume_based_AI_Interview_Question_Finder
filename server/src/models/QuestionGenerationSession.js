@@ -89,6 +89,28 @@ const questionGenerationSessionSchema = new mongoose.Schema(
             type: [generatedQuestionSchema],
             default: [],
         },
+        mlDatasetQuestions: {
+            type: [
+                {
+                    question: {
+                        type: String,
+                        required: true,
+                        trim: true,
+                    },
+                    topic: {
+                        type: String,
+                        trim: true,
+                        default: "Unknown",
+                    },
+                    difficulty: {
+                        type: String,
+                        trim: true,
+                        default: "Unknown",
+                    },
+                },
+            ],
+            default: [],
+        },
         displayName: {
             type: String,
             trim: true,
