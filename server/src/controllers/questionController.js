@@ -540,13 +540,15 @@ export const generateQuestions = async (req, res) => {
 
     // Try to fetch real questions from ML API
     try {
-        console.log("[generateQuestions] Calling ML API to search for questions...");
-        
+        console.log(
+            "[generateQuestions] Calling ML API to search for questions...",
+        );
+
         const mlQuestions = await MLPipelineService.searchQuestions(
             profileString,
             searchSkills,
             Math.max(requestedCount, 30), // Request more to ensure we get at least 10
-            0.15 // Lower threshold to get more results
+            0.15, // Lower threshold to get more results
         );
 
         // Transform ML API questions to session format
@@ -566,21 +568,21 @@ export const generateQuestions = async (req, res) => {
                 }));
 
             console.log(
-                `[generateQuestions] ✅ Got ${generatedQuestions.length} real questions from ML API`
+                `[generateQuestions] ✅ Got ${generatedQuestions.length} real questions from ML API`,
             );
         }
     } catch (error) {
         mlApiError = error.message;
         console.warn(
             "[generateQuestions] ML API error (will use fallback):",
-            mlApiError
+            mlApiError,
         );
     }
 
     // Fallback: Use template-based generation if ML API fails
     if (generatedQuestions.length === 0) {
         console.log(
-            "[generateQuestions] Using fallback template-based question generation..."
+            "[generateQuestions] Using fallback template-based question generation...",
         );
         generatedQuestions = buildGeneratedQuestions({
             resumeSkills: searchSkills,
@@ -596,7 +598,7 @@ export const generateQuestions = async (req, res) => {
     if (generatedQuestions.length < 10) {
         const additionalCount = 10 - generatedQuestions.length;
         console.log(
-            `[generateQuestions] Adding ${additionalCount} fallback questions to reach minimum of 10`
+            `[generateQuestions] Adding ${additionalCount} fallback questions to reach minimum of 10`,
         );
         const fallbackQuestions = buildGeneratedQuestions({
             resumeSkills: searchSkills,
@@ -794,4 +796,37 @@ export const deleteSession = async (req, res) => {
     return res.status(200).json({
         message: "Session deleted successfully",
     });
+};
+
+export const createSession = async (req, res) => {
+    const {
+        targetRole,
+        targetCompany,
+        targetLevel,
+        targetDomain,
+        sourceFileName,
+        resumeSkills,
+        displayName,
+    } = req.body;
+
+    const session = await QuestionGenerationSession.create({
+        user: req.user.sub,
+        targetRole: targetRole || "",
+        targetCompany: targetCompany || "",
+        targetLevel: targetLevel || "mid",
+        targetDomain: targetDomain || "",
+        sourceFileName: sourceFileName || "",
+        resumeSkills: Array.isArray(resumeSkills)
+            ? resumeSkills.map((s) => s.toLowerCase())
+            : [],
+        displayName: displayName || null,
+        generatedQuestions: [],
+        mlDatasetQuestions: [],
+    });
+
+    const responseData = await shapeSessionForResponse(session);
+
+    return res
+        .status(201)
+        .json({ message: "Session created", session: responseData });
 };
