@@ -17,6 +17,7 @@ from io import BytesIO
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import traceback
+import random
 
 # Add ML_Preprocessor_scripts to Python path
 SCRIPT_DIR = Path(__file__).parent
@@ -27,6 +28,44 @@ from pipeline.pdf_parser import extract_clean_text
 from pipeline.profile_builder import build_profile
 from search.searcher import search, search_with_explanations
 from pipeline.ontology import expand_skills
+
+# Load simple question dataset (fallback for skill-based queries)
+QUESTIONS_DATA = None
+DATA_DIR = SCRIPT_DIR / "data"
+QUESTIONS_JSON = DATA_DIR / "questions.json"
+
+def load_questions_dataset():
+    global QUESTIONS_DATA
+    if QUESTIONS_DATA is not None:
+        return QUESTIONS_DATA
+
+    try:
+        if QUESTIONS_JSON.exists():
+            with open(QUESTIONS_JSON, "r", encoding="utf-8") as fh:
+                QUESTIONS_DATA = json.load(fh)
+        else:
+            QUESTIONS_DATA = []
+    except Exception:
+        QUESTIONS_DATA = []
+
+    return QUESTIONS_DATA
+
+
+def match_skill_rows(skill: str, dataset: list):
+    """Return rows where topic or question contains the skill (case-insensitive)."""
+    skill_lower = (skill or "").strip().lower()
+    if not skill_lower:
+        return []
+
+    matched = []
+    for row in dataset:
+        topic = str(row.get("topic", "") or "").lower()
+        question = str(row.get("question", "") or "").lower()
+        if skill_lower in topic or skill_lower in question:
+            matched.append(row)
+
+    return matched
+
 
 # Configure logging
 logging.basicConfig(
@@ -369,6 +408,85 @@ def search_questions():
         logger.error(f"Error in search endpoint: {str(e)}")
         logger.error(traceback.format_exc())
         raise APIError(f"Question search failed: {str(e)}", 500)
+
+
+@app.route('/get-questions-by-skills', methods=['POST'])
+def get_questions_by_skills():
+    """Compatibility endpoint for frontend skill-based question fetch.
+
+    Accepts JSON: { skills: ["Python", "Docker"], max_per_skill: 5 }
+    Returns structure similar to the FastAPI implementation.
+    """
+    try:
+        if not request.json:
+            raise APIError("Request must be JSON", 400)
+
+        skills = request.json.get('skills', [])
+        max_per_skill = int(request.json.get('max_per_skill', 5))
+
+        if not isinstance(skills, list) or len(skills) == 0:
+            raise APIError("skills must be a non-empty list", 400)
+
+        # Load dataset
+        dataset = load_questions_dataset()
+
+        if not dataset:
+            # No dataset available; return empty results with message
+            results = [{
+                "skill": s,
+                "matchedCount": 0,
+                "questions": [],
+            } for s in skills]
+
+            return serialize_response(True, data={
+                "message": "No questions dataset loaded",
+                "totalQuestions": 0,
+                "results": results,
+            })
+
+        results = []
+        seen_questions = set()
+
+        for skill in skills:
+            matched_rows = match_skill_rows(skill, dataset)
+
+            # Remove already seen question texts
+            filtered = [r for r in matched_rows if (r.get('question') or '') not in seen_questions]
+
+            # Sample up to max_per_skill
+            if len(filtered) > max_per_skill:
+                filtered = random.sample(filtered, max_per_skill)
+
+            questions = []
+            for row in filtered:
+                q_text = row.get('question') or ''
+                seen_questions.add(q_text)
+                questions.append({
+                    "question": q_text,
+                    "topic": row.get('topic') or '',
+                    "difficulty": row.get('difficulty') or '',
+                })
+
+            results.append({
+                "skill": skill,
+                "matchedCount": len(questions),
+                "questions": questions,
+            })
+
+        total_questions = sum(r['matchedCount'] for r in results)
+
+        return serialize_response(True, data={
+            "message": f"Found {total_questions} questions across {len(skills)} skills",
+            "totalQuestions": total_questions,
+            "results": results,
+        })
+
+    except APIError:
+        raise
+    except Exception as e:
+        logger.error("Error in get-questions-by-skills endpoint: %s", str(e))
+        logger.error(traceback.format_exc())
+        raise APIError("Internal server error", 500)
 
 
 @app.route('/api/process', methods=['POST'])
