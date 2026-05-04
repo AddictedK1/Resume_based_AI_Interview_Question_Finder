@@ -8,5 +8,3 @@ services:
     envVars:
       - key: PORT
         sync: false
-      - key: LIGHTWEIGHT_ML_MODE
-        value: true

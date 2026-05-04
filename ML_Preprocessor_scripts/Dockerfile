@@ -35,4 +35,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD python -c "import spacy, sentence_transformers, faiss; print('OK')" || exit 1
 
 # Default command for Render/container deployments
-CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5001} --workers 1 --threads 4 ml_api_server:app"]
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5001} --workers 1 --threads 4 --timeout 180 --graceful-timeout 180 --preload ml_api_server:app"]

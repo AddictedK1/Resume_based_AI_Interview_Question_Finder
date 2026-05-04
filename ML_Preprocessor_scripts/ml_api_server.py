@@ -39,6 +39,8 @@ def ensure_spacy_model():
 # Import ML pipeline components
 from pipeline.pdf_parser import extract_clean_text
 from pipeline.profile_builder import build_profile
+from search.embedder import get_model as warmup_embedder_model
+from search.searcher import _load_assets as warmup_search_assets
 from search.searcher import search, search_with_explanations
 from pipeline.ontology import expand_skills
 
@@ -118,6 +120,17 @@ def build_questions_from_skills(skills: list, max_per_skill: int = 5, total_limi
     return results
 
 
+def warmup_ml_assets():
+    """Load the embedding model and FAISS assets once at startup."""
+    try:
+        logger.info("Warming up ML assets...")
+        warmup_search_assets()
+        warmup_embedder_model()
+        logger.info("✓ ML assets warmed up")
+    except Exception as error:
+        logger.warning(f"ML asset warmup skipped or incomplete: {error}")
+
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -135,6 +148,7 @@ MAX_CONTENT_LENGTH = 10 * 1024 * 1024  # 10MB max request size
 
 # Do not eagerly download spaCy at boot. The request handlers and pipeline
 # now tolerate a missing model.
+warmup_ml_assets()
 
 
 class APIError(Exception):
@@ -611,21 +625,13 @@ def process_resume_end_to_end():
             # Step 2: Search for questions
             logger.info("Step 3: Searching for relevant questions...")
 
-            lightweight_mode = os.getenv("LIGHTWEIGHT_ML_MODE", "true").lower() == "true"
-            if lightweight_mode:
-                questions = build_questions_from_skills(
-                    profile.get("expanded_skills", []),
-                    max_per_skill=5,
-                    total_limit=top_k,
-                )
-            else:
-                questions = search(
-                    profile_string=profile.get("profile_string", ""),
-                    top_k=top_k,
-                    min_score=min_score,
-                    user_skills=profile.get("expanded_skills", []),
-                    use_tag_boosting=True
-                )
+            questions = search(
+                profile_string=profile.get("profile_string", ""),
+                top_k=top_k,
+                min_score=min_score,
+                user_skills=profile.get("expanded_skills", []),
+                use_tag_boosting=True
+            )
             
             processing_time = int((time.time() - start_time) * 1000)
             
