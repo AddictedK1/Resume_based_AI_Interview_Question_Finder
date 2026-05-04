@@ -32,25 +32,20 @@
 
 
 
---prefer-binary
 
-# Core ML
+
+
+
+--prefer-binary
+setuptools
+wheel
+
 numpy==1.24.3
 pandas==2.0.3
-
-# PDF
 pypdf==3.17.1
-
-# ML (keep only if actually used)
 faiss-cpu==1.7.4
-
-# If you REALLY need embeddings
 sentence-transformers==2.2.2
-
-# API
 flask==3.0.0
 flask-cors==4.0.0
-
-# Utils
 tqdm==4.65.0
 python-dotenv==1.0.0
