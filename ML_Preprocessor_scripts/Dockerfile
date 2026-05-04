@@ -16,8 +16,8 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Download spaCy model
-RUN python -m spacy download en_core_web_sm
+# Download spaCy model (optional - will retry at runtime if not available)
+RUN python -m spacy download en_core_web_sm || echo 'Warning: spaCy model not downloaded during build; will attempt at runtime'
 
 # Copy application code
 COPY pipeline ./pipeline
