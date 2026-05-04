@@ -8,9 +8,7 @@ import {
   me,
   refresh,
   register,
-  resendVerification,
   resetPassword,
-  verifyEmail,
 } from "../controllers/authController.js";
 import { ROLES } from "../constants/roles.js";
 import { authenticate } from "../middleware/authenticate.js";
@@ -21,22 +19,13 @@ import {
   forgotPasswordSchema,
   loginSchema,
   registerSchema,
-  resendVerificationSchema,
   resetPasswordSchema,
-  verifyEmailSchema,
 } from "../validators/authSchemas.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 const authRouter = Router();
 
 authRouter.post("/register", authLimiter, validate(registerSchema), asyncHandler(register));
-authRouter.post("/verify-email", authLimiter, validate(verifyEmailSchema), asyncHandler(verifyEmail));
-authRouter.post(
-  "/resend-verification",
-  authLimiter,
-  validate(resendVerificationSchema),
-  asyncHandler(resendVerification),
-);
 authRouter.post("/login", authLimiter, validate(loginSchema), asyncHandler(login));
 authRouter.post("/refresh", asyncHandler(refresh));
 authRouter.post("/logout", asyncHandler(logout));

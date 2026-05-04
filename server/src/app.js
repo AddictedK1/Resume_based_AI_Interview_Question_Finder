@@ -42,6 +42,7 @@ app.use(helmet());
 //   }),
 // );
 
+app.set("trust proxy", 1);
 
 const allowedOrigins = new Set([
   normalizeOrigin(env.FRONTEND_URL),
@@ -68,8 +69,6 @@ app.use(
     credentials: true,
   })
 );
-
-
 
 
 app.use(cookieParser());

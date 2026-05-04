@@ -21,15 +21,6 @@ export const loginSchema = z.object({
   sessionDays: z.union([z.literal(1), z.literal(7), z.literal(30)]).optional(),
 });
 
-export const verifyEmailSchema = z.object({
-  email: z.string().email(),
-  token: z.string().min(20),
-});
-
-export const resendVerificationSchema = z.object({
-  email: z.string().email(),
-});
-
 export const forgotPasswordSchema = z.object({
   email: z.string().email(),
 });

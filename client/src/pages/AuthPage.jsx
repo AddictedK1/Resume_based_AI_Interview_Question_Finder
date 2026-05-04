@@ -95,7 +95,7 @@ export default function AuthPage({ type = "login" }) {
           password: form.password,
         });
 
-        setSuccessMessage(data.message || "Account created. Please verify your email.");
+        setSuccessMessage(data.message || "Account created. You can sign in now.");
       }
     } catch (error) {
       setErrorMessage(error.message || "Something went wrong");

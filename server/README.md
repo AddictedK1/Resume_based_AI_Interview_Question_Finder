@@ -4,7 +4,7 @@ Node.js + Express + MongoDB authentication backend for user login/signup.
 
 ## Features
 
-- User registration with email verification token flow
+- User registration with immediate sign-in
 - Login with JWT access token
 - Forgot/reset password flow
 - Role-based authorization (`user`, `admin`)
@@ -39,8 +39,6 @@ Server runs at `http://localhost:5000` by default.
 
 - `GET /health`
 - `POST /api/auth/register`
-- `POST /api/auth/verify-email`
-- `POST /api/auth/resend-verification`
 - `POST /api/auth/login`
 - `POST /api/auth/forgot-password`
 - `POST /api/auth/reset-password`
@@ -56,7 +54,7 @@ Server runs at `http://localhost:5000` by default.
 
 ## Notes
 
-- If SMTP is not configured, verification/reset links are printed in server logs for local development.
+- If SMTP is not configured, password reset links are printed in server logs for local development.
 - Admin role is never assigned during signup. Promote a trusted user manually in MongoDB by setting `role` to `admin`.
 - AI practice evaluation supports Gemini when configured. Without Gemini key, the server falls back to built-in heuristic scoring.
 

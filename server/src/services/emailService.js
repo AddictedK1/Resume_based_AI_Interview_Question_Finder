@@ -34,16 +34,6 @@ const sendOrLog = async ({ to, subject, text }) => {
   });
 };
 
-export const sendVerificationEmail = async ({ to, token }) => {
-  const verifyUrl = `${env.FRONTEND_URL}/verify-email?token=${token}&email=${encodeURIComponent(to)}`;
-
-  await sendOrLog({
-    to,
-    subject: "Verify your email",
-    text: `Welcome to Resume AI. Verify your account using this link: ${verifyUrl}`,
-  });
-};
-
 export const sendPasswordResetEmail = async ({ to, token }) => {
   const resetUrl = `${env.FRONTEND_URL}/reset-password?token=${token}&email=${encodeURIComponent(to)}`;
 

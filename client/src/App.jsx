@@ -5,7 +5,6 @@ import LandingPage from "./pages/LandingPage";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import AdminPanel from "./pages/AdminPanel";
-import VerifyEmailPage from "./pages/VerifyEmailPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import AdminRoute from "./components/AdminRoute";
 import ResumeUploadCard from "./components/ResumeUploadCard";
@@ -47,7 +46,6 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<AuthPage type="login" />} />
           <Route path="/signup" element={<AuthPage type="signup" />} />
-          <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route
             path="/dashboard"
