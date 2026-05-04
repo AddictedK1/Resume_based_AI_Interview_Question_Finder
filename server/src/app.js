@@ -14,33 +14,64 @@ const app = express();
 
 const normalizeOrigin = (value) => value?.replace(/\/$/, "");
 
-const allowedOrigins = new Set(
-  env.NODE_ENV === "development"
-    ? [normalizeOrigin(env.FRONTEND_URL), "http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173", "http://127.0.0.1:5174"]
-    : [normalizeOrigin(env.FRONTEND_URL)],
-);
+// const allowedOrigins = new Set(
+//   env.NODE_ENV === "development"
+//     ? [normalizeOrigin(env.FRONTEND_URL), "http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173", "http://127.0.0.1:5174"]
+//     : [normalizeOrigin(env.FRONTEND_URL)],
+// );
 
 app.use(helmet());
+// app.use(
+//   cors({
+//     origin: (origin, callback) => {
+//       const normalizedOrigin = normalizeOrigin(origin);
+//       const isLocalDevOrigin =
+//         env.NODE_ENV === "development" &&
+//         /^https?:\/\/(localhost|127\.0\.0\.1):\d+$/.test(normalizedOrigin || "");
+
+//       if (!origin || allowedOrigins.has(normalizedOrigin) || isLocalDevOrigin) {
+//         callback(null, true);
+//         return;
+//       }
+
+//       callback(new Error(`CORS origin not allowed: ${origin}`));
+//     },
+//     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//     credentials: true,
+//   }),
+// );
+
+
+const allowedOrigins = new Set([
+  normalizeOrigin(env.FRONTEND_URL),
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://127.0.0.1:5173",
+  "http://127.0.0.1:5174",
+].filter(Boolean));
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      const normalizedOrigin = normalizeOrigin(origin);
-      const isLocalDevOrigin =
-        env.NODE_ENV === "development" &&
-        /^https?:\/\/(localhost|127\.0\.0\.1):\d+$/.test(normalizedOrigin || "");
+      if (!origin) return callback(null, true);
 
-      if (!origin || allowedOrigins.has(normalizedOrigin) || isLocalDevOrigin) {
-        callback(null, true);
-        return;
+      const normalizedOrigin = normalizeOrigin(origin);
+
+      if (allowedOrigins.has(normalizedOrigin)) {
+        return callback(null, true);
       }
 
-      callback(new Error(`CORS origin not allowed: ${origin}`));
+      console.warn("❌ Blocked by CORS:", origin);
+      return callback(null, false); // don't crash
     },
-    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
-  }),
+  })
 );
+
+
+
+
 app.use(cookieParser());
 app.use(express.json({ limit: "10mb" })); // Increased for file uploads
 app.use(express.urlencoded({ limit: "10mb", extended: true })); // Support file uploads

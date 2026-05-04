@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
 
-export const connectDatabase = async (mongoUri) => {
+const connectDatabase = async (mongoUri) => {
   mongoose.set("strictQuery", true);
   await mongoose.connect(mongoUri);
   console.log("MongoDB connected");
 };
+
+
+export default connectDatabase;
