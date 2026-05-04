@@ -1,31 +1,56 @@
-# ML Pipeline Dependencies
-# Python 3.9+
+# # ML Pipeline Dependencies
+# # Python 3.9+
 
-# PDF Processing
-pypdf==3.17.1
+# # PDF Processing
+# pypdf==3.17.1
 
-# NLP & Language Processing
-spacy==3.7.2
-sentence-transformers==2.2.2
+# # NLP & Language Processing
+# spacy==3.7.2
+# sentence-transformers==2.2.2
 
-# Vector Similarity Search
-faiss-cpu==1.7.4
+# # Vector Similarity Search
+# faiss-cpu==1.7.4
 
-# Numerical Computing
+# # Numerical Computing
+# numpy==1.24.3
+
+# # Data Processing
+# pandas==2.0.3
+
+# # Utilities
+# tqdm==4.65.0
+# python-dotenv==1.0.0
+
+# # Flask API Server
+# flask==3.0.0
+# flask-cors==4.0.0
+
+# # Optional but recommended
+# pytest==7.4.0
+# black==23.7.0
+# flake8==6.0.0
+
+
+
+--prefer-binary
+
+# Core ML
 numpy==1.24.3
-
-# Data Processing
 pandas==2.0.3
 
-# Utilities
-tqdm==4.65.0
-python-dotenv==1.0.0
+# PDF
+pypdf==3.17.1
 
-# Flask API Server
+# ML (keep only if actually used)
+faiss-cpu==1.7.4
+
+# If you REALLY need embeddings
+sentence-transformers==2.2.2
+
+# API
 flask==3.0.0
 flask-cors==4.0.0
 
-# Optional but recommended
-pytest==7.4.0
-black==23.7.0
-flake8==6.0.0
+# Utils
+tqdm==4.65.0
+python-dotenv==1.0.0
