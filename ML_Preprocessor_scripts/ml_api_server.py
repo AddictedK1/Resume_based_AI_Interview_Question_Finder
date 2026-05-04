@@ -80,6 +80,44 @@ def match_skill_rows(skill: str, dataset: list):
     return matched
 
 
+def build_questions_from_skills(skills: list, max_per_skill: int = 5, total_limit: int = 30):
+    """Build fast question results from the local question dataset.
+
+    This avoids the heavier embedding/FAISS path on constrained Render instances.
+    """
+    dataset = load_questions_dataset()
+    if not dataset:
+        return []
+
+    results = []
+    seen_questions = set()
+
+    for skill in skills:
+        if len(results) >= total_limit:
+            break
+
+        matched_rows = match_skill_rows(skill, dataset)
+        filtered = [r for r in matched_rows if (r.get("question") or "") not in seen_questions]
+
+        if len(filtered) > max_per_skill:
+            filtered = random.sample(filtered, max_per_skill)
+
+        for row in filtered:
+            if len(results) >= total_limit:
+                break
+
+            q_text = row.get("question") or ""
+            seen_questions.add(q_text)
+            results.append({
+                "question": q_text,
+                "topic": row.get("topic") or "",
+                "difficulty": row.get("difficulty") or "",
+                "tags": row.get("tags") or [],
+            })
+
+    return results
+
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -572,13 +610,22 @@ def process_resume_end_to_end():
             
             # Step 2: Search for questions
             logger.info("Step 3: Searching for relevant questions...")
-            questions = search(
-                profile_string=profile.get("profile_string", ""),
-                top_k=top_k,
-                min_score=min_score,
-                user_skills=profile.get("expanded_skills", []),
-                use_tag_boosting=True
-            )
+
+            lightweight_mode = os.getenv("LIGHTWEIGHT_ML_MODE", "true").lower() == "true"
+            if lightweight_mode:
+                questions = build_questions_from_skills(
+                    profile.get("expanded_skills", []),
+                    max_per_skill=5,
+                    total_limit=top_k,
+                )
+            else:
+                questions = search(
+                    profile_string=profile.get("profile_string", ""),
+                    top_k=top_k,
+                    min_score=min_score,
+                    user_skills=profile.get("expanded_skills", []),
+                    use_tag_boosting=True
+                )
             
             processing_time = int((time.time() - start_time) * 1000)
             

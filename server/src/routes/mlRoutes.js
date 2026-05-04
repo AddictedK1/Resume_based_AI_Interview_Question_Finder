@@ -251,7 +251,7 @@ router.get(
 router.post("/save-questions-to-session", authenticate, async (req, res) => {
     try {
         const { sessionId, questions } = req.body;
-        const userId = req.user.id;
+    const userId = req.user.id || req.user.sub;
 
         if (!sessionId) {
             return res.status(400).json({ error: "sessionId is required" });
