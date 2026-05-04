@@ -23,21 +23,18 @@ import random
 SCRIPT_DIR = Path(__file__).parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
-# Ensure spaCy model is available (download at runtime if needed)
+# spaCy is optional at startup; the pipeline now degrades gracefully if the
+# model is missing, so we avoid downloading it during worker boot.
 def ensure_spacy_model():
     try:
         import spacy
         spacy.load('en_core_web_sm')
         logger.info('✓ spaCy model en_core_web_sm loaded')
     except (OSError, ImportError):
-        logger.warning('spaCy model not found. Attempting to download...')
-        try:
-            import subprocess
-            subprocess.check_call([sys.executable, '-m', 'spacy', 'download', 'en_core_web_sm'])
-            logger.info('✓ spaCy model downloaded successfully')
-        except Exception as e:
-            logger.error(f'Failed to download spaCy model: {str(e)}')
-            logger.error('The /api/extract and /api/process endpoints may fail without this model.')
+        logger.warning(
+            'spaCy model en_core_web_sm is not available at startup; '
+            'continuing without eager download to avoid boot-time OOM.'
+        )
 
 # Import ML pipeline components
 from pipeline.pdf_parser import extract_clean_text
@@ -98,8 +95,8 @@ CORS(app)
 app.config['JSON_SORT_KEYS'] = False
 MAX_CONTENT_LENGTH = 10 * 1024 * 1024  # 10MB max request size
 
-# Ensure spaCy model is available before running
-ensure_spacy_model()
+# Do not eagerly download spaCy at boot. The request handlers and pipeline
+# now tolerate a missing model.
 
 
 class APIError(Exception):
