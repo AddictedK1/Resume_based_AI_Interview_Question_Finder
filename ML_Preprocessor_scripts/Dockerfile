@@ -1,5 +1,5 @@
 # Python ML Pipeline Dockerfile
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 WORKDIR /app/ml_pipeline
 
@@ -33,5 +33,5 @@ USER appuser
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD python -c "import spacy, sentence_transformers, faiss; print('OK')" || exit 1
 
-# Default command (can be overridden by parent orchestration)
-CMD ["python", "-c", "print('ML Pipeline container ready')"]
+# Default command for Render/container deployments
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5001} --workers 1 --threads 4 ml_api_server:app"]

@@ -1,51 +1,38 @@
-# # ML Pipeline Dependencies
-# # Python 3.9+
+# ML Pipeline Dependencies
+# Python 3.11+
 
-# # PDF Processing
-# pypdf==3.17.1
-
-# # NLP & Language Processing
-# spacy==3.7.2
-# sentence-transformers==2.2.2
-
-# # Vector Similarity Search
-# faiss-cpu==1.7.4
-
-# # Numerical Computing
-# numpy==1.24.3
-
-# # Data Processing
-# pandas==2.0.3
-
-# # Utilities
-# tqdm==4.65.0
-# python-dotenv==1.0.0
-
-# # Flask API Server
-# flask==3.0.0
-# flask-cors==4.0.0
-
-# # Optional but recommended
-# pytest==7.4.0
-# black==23.7.0
-# flake8==6.0.0
-
-
-
-
-
-
-
---prefer-binary
-setuptools
-wheel
-
-numpy==1.24.3
-pandas==2.0.3
+# PDF Processing
+pymupdf==1.27.2
 pypdf==3.17.1
-faiss-cpu==1.7.4
-sentence-transformers==2.2.2
-flask==3.0.0
-flask-cors==4.0.0
+
+# NLP & Language Processing
+spacy==3.7.2
+sentence-transformers==4.1.0
+
+# Vector Similarity Search
+faiss-cpu==1.13.2
+
+# Numerical Computing
+numpy==1.26.4
+
+# Data Processing
+pandas==2.2.3
+
+# Utilities
 tqdm==4.65.0
 python-dotenv==1.0.0
+
+# Flask API Server
+flask==3.0.0
+flask-cors==4.0.0
+gunicorn==23.0.0
+
+# FastAPI compatibility utilities used by the alternate ML API module
+fastapi==0.115.6
+uvicorn==0.32.1
+openpyxl==3.1.5
+
+# Optional but recommended
+pytest==7.4.0
+black==23.7.0
+flake8==6.0.0
