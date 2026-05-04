@@ -606,8 +606,26 @@ def process_resume_end_to_end():
 # SERVER STARTUP
 # ──────────────────────────────────────────────────────────────────
 
+# if __name__ == '__main__':
+#     port = int(os.environ.get('ML_API_PORT', 5001))
+#     debug = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    
+#     logger.info(f"Starting ML API Server on port {port}")
+#     logger.info(f"Debug mode: {debug}")
+#     logger.info(f"ML Scripts directory: {SCRIPT_DIR}")
+    
+#     app.run(
+#         host='0.0.0.0',
+#         port=port,
+#         debug=debug,
+#         use_reloader=debug
+#     )
+
+
 if __name__ == '__main__':
-    port = int(os.environ.get('ML_API_PORT', 5001))
+    import os
+
+    port = int(os.environ.get('PORT', 5001))  # FIXED port
     debug = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
     
     logger.info(f"Starting ML API Server on port {port}")
@@ -620,3 +638,5 @@ if __name__ == '__main__':
         debug=debug,
         use_reloader=debug
     )
+
+
