@@ -1,6 +1,19 @@
 import spacy
 
-nlp = spacy.load("en_core_web_sm")
+_nlp = None
+
+
+def _get_nlp():
+    global _nlp
+    if _nlp is not None:
+        return _nlp
+
+    try:
+        _nlp = spacy.load("en_core_web_sm")
+    except OSError:
+        _nlp = None
+
+    return _nlp
 
 DOMAIN_KEYWORDS = [
     "api", "rest", "graphql", "database", "backend", "frontend", "full stack",
@@ -25,13 +38,22 @@ EDUCATION_SIGNALS = [
 
 
 def _extract_noun_phrases(text: str, min_words: int = 2, max_words: int = 4) -> list[str]:
+    nlp = _get_nlp()
+    if nlp is None or not nlp.has_pipe("parser"):
+        return []
+
     doc = nlp(text)
     phrases = []
-    for chunk in doc.noun_chunks:
-        phrase = chunk.text.strip().lower()
-        word_count = len(phrase.split())
-        if min_words <= word_count <= max_words:
-            phrases.append(phrase)
+
+    try:
+        for chunk in doc.noun_chunks:
+            phrase = chunk.text.strip().lower()
+            word_count = len(phrase.split())
+            if min_words <= word_count <= max_words:
+                phrases.append(phrase)
+    except ValueError:
+        return []
+
     return phrases
 
 
