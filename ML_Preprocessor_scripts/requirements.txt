@@ -7,10 +7,6 @@ pypdf==3.17.1
 
 # NLP & Language Processing
 spacy==3.7.2
-sentence-transformers==4.1.0
-
-# Vector Similarity Search
-faiss-cpu==1.13.2
 
 # Numerical Computing
 numpy==1.26.4
@@ -32,7 +28,3 @@ fastapi==0.115.6
 uvicorn==0.32.1
 openpyxl==3.1.5
 
-# Optional but recommended
-pytest==7.4.0
-black==23.7.0
-flake8==6.0.0

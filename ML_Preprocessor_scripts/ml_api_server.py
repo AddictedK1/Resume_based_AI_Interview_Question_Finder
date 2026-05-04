@@ -9,6 +9,7 @@ import sys
 import json
 import base64
 import logging
+import re
 import tempfile
 from pathlib import Path
 from datetime import datetime
@@ -39,9 +40,6 @@ def ensure_spacy_model():
 # Import ML pipeline components
 from pipeline.pdf_parser import extract_clean_text
 from pipeline.profile_builder import build_profile
-from search.embedder import get_model as warmup_embedder_model
-from search.searcher import _load_assets as warmup_search_assets
-from search.searcher import search, search_with_explanations
 from pipeline.ontology import expand_skills
 
 # Load simple question dataset (fallback for skill-based queries)
@@ -83,52 +81,98 @@ def match_skill_rows(skill: str, dataset: list):
 
 
 def build_questions_from_skills(skills: list, max_per_skill: int = 5, total_limit: int = 30):
-    """Build fast question results from the local question dataset.
+    """Build ranked questions from dataset using skill overlap.
 
-    This avoids the heavier embedding/FAISS path on constrained Render instances.
+    Designed for low-memory deployments where embedding models are too heavy.
     """
     dataset = load_questions_dataset()
     if not dataset:
         return []
 
-    results = []
+    normalized_skills = [s.strip().lower() for s in (skills or []) if str(s).strip()]
+    if not normalized_skills:
+        return []
+
+    skill_tokens = set()
+    for skill in normalized_skills:
+        skill_tokens.update(re.findall(r"[a-z0-9+#.]+", skill))
+
+    scored = []
     seen_questions = set()
 
-    for skill in skills:
+    for row in dataset:
+        question = str(row.get("question") or "").strip()
+        if not question or question in seen_questions:
+            continue
+
+        topic = str(row.get("topic") or "").strip().lower()
+        tags_value = row.get("tags") or []
+        if isinstance(tags_value, str):
+            tags = [t.strip().lower() for t in tags_value.split(",") if t.strip()]
+        elif isinstance(tags_value, list):
+            tags = [str(t).strip().lower() for t in tags_value if str(t).strip()]
+        else:
+            tags = []
+
+        haystack = f"{topic} {' '.join(tags)} {question.lower()}"
+        direct_hits = sum(1 for skill in normalized_skills if skill in haystack)
+
+        if direct_hits == 0:
+            continue
+
+        text_tokens = set(re.findall(r"[a-z0-9+#.]+", haystack))
+        token_overlap = len(skill_tokens & text_tokens)
+
+        score = direct_hits * 1.0 + token_overlap * 0.05
+        if topic and topic in normalized_skills:
+            score += 0.5
+
+        scored.append((score, {
+            "question": question,
+            "topic": row.get("topic") or "",
+            "difficulty": row.get("difficulty") or "",
+            "tags": row.get("tags") or [],
+            "similarity_score": round(min(0.99, 0.35 + score * 0.06), 4),
+        }))
+
+    scored.sort(key=lambda item: item[0], reverse=True)
+
+    results = []
+    topic_count = {}
+
+    for _score, row in scored:
         if len(results) >= total_limit:
             break
 
-        matched_rows = match_skill_rows(skill, dataset)
-        filtered = [r for r in matched_rows if (r.get("question") or "") not in seen_questions]
+        topic_key = str(row.get("topic") or "unknown").strip().lower()
+        if topic_count.get(topic_key, 0) >= max_per_skill:
+            continue
 
-        if len(filtered) > max_per_skill:
-            filtered = random.sample(filtered, max_per_skill)
-
-        for row in filtered:
-            if len(results) >= total_limit:
-                break
-
-            q_text = row.get("question") or ""
-            seen_questions.add(q_text)
-            results.append({
-                "question": q_text,
-                "topic": row.get("topic") or "",
-                "difficulty": row.get("difficulty") or "",
-                "tags": row.get("tags") or [],
-            })
+        topic_count[topic_key] = topic_count.get(topic_key, 0) + 1
+        results.append(row)
 
     return results
 
 
-def warmup_ml_assets():
-    """Load the embedding model and FAISS assets once at startup."""
-    try:
-        logger.info("Warming up ML assets...")
-        warmup_search_assets()
-        warmup_embedder_model()
-        logger.info("✓ ML assets warmed up")
-    except Exception as error:
-        logger.warning(f"ML asset warmup skipped or incomplete: {error}")
+def semantic_search_questions(profile_string, user_skills, top_k, min_score, with_explanations):
+    """Run semantic search lazily, only when explicitly enabled."""
+    from search.searcher import search, search_with_explanations
+
+    if with_explanations and user_skills:
+        return search_with_explanations(
+            profile_string=profile_string,
+            user_skills=user_skills,
+            top_k=top_k,
+            min_score=min_score,
+        )
+
+    return search(
+        profile_string=profile_string,
+        top_k=top_k,
+        min_score=min_score,
+        user_skills=user_skills,
+        use_tag_boosting=True,
+    )
 
 
 # Configure logging
@@ -146,9 +190,8 @@ CORS(app)
 app.config['JSON_SORT_KEYS'] = False
 MAX_CONTENT_LENGTH = 10 * 1024 * 1024  # 10MB max request size
 
-# Do not eagerly download spaCy at boot. The request handlers and pipeline
-# now tolerate a missing model.
-warmup_ml_assets()
+# Default lightweight mode for low-memory platforms like Render free tier.
+LIGHTWEIGHT_ML_MODE = os.getenv("LIGHTWEIGHT_ML_MODE", "true").lower() == "true"
 
 
 class APIError(Exception):
@@ -435,21 +478,21 @@ def search_questions():
         logger.info(f"Searching for {top_k} questions with min_score={min_score}")
         
         # Search for questions
-        if with_explanations and user_skills:
-            logger.info("Using detailed explanations mode")
-            results = search_with_explanations(
+        if LIGHTWEIGHT_ML_MODE:
+            results = build_questions_from_skills(
+                skills=user_skills,
+                max_per_skill=5,
+                total_limit=top_k,
+            )
+        else:
+            if with_explanations and user_skills:
+                logger.info("Using detailed explanations mode")
+            results = semantic_search_questions(
                 profile_string=profile_string,
                 user_skills=user_skills,
                 top_k=top_k,
-                min_score=min_score
-            )
-        else:
-            results = search(
-                profile_string=profile_string,
-                top_k=top_k,
                 min_score=min_score,
-                user_skills=user_skills if use_tag_boosting else None,
-                use_tag_boosting=use_tag_boosting
+                with_explanations=with_explanations,
             )
         
         processing_time = int((time.time() - start_time) * 1000)
@@ -625,13 +668,20 @@ def process_resume_end_to_end():
             # Step 2: Search for questions
             logger.info("Step 3: Searching for relevant questions...")
 
-            questions = search(
-                profile_string=profile.get("profile_string", ""),
-                top_k=top_k,
-                min_score=min_score,
-                user_skills=profile.get("expanded_skills", []),
-                use_tag_boosting=True
-            )
+            if LIGHTWEIGHT_ML_MODE:
+                questions = build_questions_from_skills(
+                    skills=profile.get("expanded_skills", []),
+                    max_per_skill=5,
+                    total_limit=top_k,
+                )
+            else:
+                questions = semantic_search_questions(
+                    profile_string=profile.get("profile_string", ""),
+                    user_skills=profile.get("expanded_skills", []),
+                    top_k=top_k,
+                    min_score=min_score,
+                    with_explanations=False,
+                )
             
             processing_time = int((time.time() - start_time) * 1000)
             

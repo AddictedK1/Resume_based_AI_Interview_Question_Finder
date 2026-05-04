@@ -3,21 +3,14 @@ FROM python:3.11-slim
 
 WORKDIR /app/ml_pipeline
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
-
 # Copy requirements
 COPY requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Download spaCy model (optional - will retry at runtime if not available)
-RUN python -m spacy download en_core_web_sm || echo 'Warning: spaCy model not downloaded during build; will attempt at runtime'
+# Skip spaCy model download at build time on free tier to keep build fast and stable
+RUN echo 'Skipping spaCy model download during build'
 
 # Copy application code
 COPY ml_api_server.py .
@@ -32,7 +25,7 @@ USER appuser
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD python -c "import spacy, sentence_transformers, faiss; print('OK')" || exit 1
+  CMD python -c "import flask, fitz; print('OK')" || exit 1
 
 # Default command for Render/container deployments
-CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5001} --workers 1 --threads 4 --timeout 180 --graceful-timeout 180 --preload ml_api_server:app"]
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5001} --workers 1 --threads 2 --timeout 120 --graceful-timeout 30 ml_api_server:app"]
