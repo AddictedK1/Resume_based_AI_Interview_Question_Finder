@@ -1,11 +1,10 @@
 services:
   - type: web
     name: resume-ai-ml-pipeline
-    env: python
+    env: docker
     plan: free
     rootDir: ML_Preprocessor_scripts
-    buildCommand: pip install -r requirements.txt && python -m spacy download en_core_web_sm
-    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 4 ml_api_server:app
+    healthCheckPath: /health
     envVars:
       - key: PORT
         sync: false

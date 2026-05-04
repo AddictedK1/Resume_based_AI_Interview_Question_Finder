@@ -20,6 +20,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN python -m spacy download en_core_web_sm || echo 'Warning: spaCy model not downloaded during build; will attempt at runtime'
 
 # Copy application code
+COPY ml_api_server.py .
 COPY pipeline ./pipeline
 COPY search ./search
 COPY scripts ./scripts
