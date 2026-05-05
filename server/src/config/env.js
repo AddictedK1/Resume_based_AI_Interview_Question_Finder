@@ -15,7 +15,7 @@ const envSchema = z.object({
     (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
     z.string().min(1).optional(),
   ),
-  GEMINI_MODEL: z.string().min(1).default("gemini-1.5-flash"),
+  GEMINI_MODEL: z.string().min(1).default("gemini-2.5-flash"),
   EMAIL_TOKEN_EXPIRY_MINUTES: z.coerce.number().int().positive().default(60),
   RESET_TOKEN_EXPIRY_MINUTES: z.coerce.number().int().positive().default(30),
   SMTP_HOST: z.string().optional(),
