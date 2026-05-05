@@ -33,7 +33,6 @@
 
 ### Current Configuration
 ```
-GEMINI_API_KEY=AIzaSyBz4jdMnbbX25tyHQBSdlkGBT30Y2KA5PA
 GEMINI_MODEL=gemini-1.5-flash  ❌ OUTDATED
 ```
 
