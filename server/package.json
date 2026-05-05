@@ -7,7 +7,11 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
-    "check": "node --check src/index.js"
+    "check": "node --check src/index.js",
+    "test:gemini": "node test-gemini-api.js",
+    "test:gemini:diagnostic": "node diagnose-gemini.js",
+    "test:gemini:comprehensive": "node test-gemini-comprehensive.js",
+    "monitor:gemini": "node monitor-gemini.js"
   },
   "engines": {
     "node": ">=18.0.0"

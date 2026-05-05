@@ -105,7 +105,23 @@ Answer: ${answerText}`;
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Gemini API error ${response.status}: ${errorText.slice(0, 240)}`);
+    let errorMessage = `Gemini API error ${response.status}`;
+    
+    // Provide specific error messages for common issues
+    if (response.status === 429) {
+      errorMessage = `Gemini quota exceeded. Free tier limit reached or billing issue. Status: 429`;
+    } else if (response.status === 401 || response.status === 403) {
+      errorMessage = `Gemini API key invalid or unauthorized. Status: ${response.status}`;
+    } else if (response.status === 404) {
+      errorMessage = `Gemini model "${env.GEMINI_MODEL}" not found. Check model name is current. Status: 404`;
+    } else if (response.status >= 500) {
+      errorMessage = `Gemini API server error. Status: ${response.status}. Try again later.`;
+    }
+    
+    console.warn(`[Gemini Service] ${errorMessage}`);
+    console.warn(`[Gemini Service] Response: ${errorText.slice(0, 300)}`);
+    
+    throw new Error(errorMessage);
   }
 
   const data = await response.json();
